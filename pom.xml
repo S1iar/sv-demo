@@ -51,6 +51,12 @@
 			<artifactId>lombok</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-boot-starter</artifactId>
+			<version>3.4.2</version>
+		</dependency>
+
 <!--		spring-boot-devtools仅适用于开发环境，不应在生产环境中使用-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
