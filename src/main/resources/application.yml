@@ -1,0 +1,23 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+yml-test:
+  number: '123123'
+  name: 'momo'
+  hobbies:
+    - GG
+    - WOW
+    - LOL
+  peoples:
+    - name: '真一'
+      age: 32
+    - name: '行医'
+      age: 44
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+#      additional-paths: src/main/java
