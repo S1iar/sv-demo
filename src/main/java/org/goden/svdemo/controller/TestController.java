@@ -23,4 +23,12 @@ public class TestController {
         Integer age = (Integer) stringObjectMap.get("age");
         return name+" "+age;
     }
+
+    @GetMapping("/math")
+    public boolean mathTest() {
+        String s1 = "sliar";
+        String s2 = "sli"+"ar";
+
+        return s1 == s2;
+    }
 }

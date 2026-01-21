@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <!-- 定义日志格式和存储路径的变量 -->
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="LOG_FILE_NAME">app.log</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- 控制台输出器 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}" disableAnsi="false" noConsoleNoAnsi="false"/>
+            <!-- 控制台只输出level及以上级别的信息(onMatch),其他的直接拒绝(onMismatch) -->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+
+        <!-- 滚动文件输出器 -->
+        <RollingFile name="RollingFile" fileName="${LOG_DIR}/${LOG_FILE_NAME}" filePattern="${LOG_DIR}/app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <!-- 按时间滚动（每天） -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- 按文件大小滚动（例如最大100MB） -->
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <!-- 最多保留30天或10个文件 -->
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <!-- 异步日志（提升性能） -->
+        <Async name="AsyncAppender" bufferSize="1024">
+            <AppenderRef ref="RollingFile"/>
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <!-- Spring 框架日志（INFO级别） -->
+        <Logger name="org.springframework" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- MyBatis SQL 日志（DEBUG级别） -->
+        <Logger name="com.example.mapper" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncAppender"/>
+        </Logger>
+
+        <!-- 根日志记录器（全局默认） -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
