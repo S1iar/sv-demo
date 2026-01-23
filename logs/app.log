@@ -1,0 +1,2 @@
+2026-01-22 14:30:24.694 [restartedMain] INFO  org.goden.svdemo.SvDemoApplication - Starting SvDemoApplication using Java 22.0.2 with PID 9588 (D:\GitLabProject\sv-demo\target\classes started by 13677 in D:\GitLabProject\sv-demo)
+2026-01-22 14:30:24.699 [restartedMain] INFO  org.goden.svdemo.SvDemoApplication - No active profile set, falling back to 1 default profile: "default"
