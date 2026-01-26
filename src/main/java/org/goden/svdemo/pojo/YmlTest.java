@@ -13,7 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class test {
+public class YmlTest {
     public String number;
 
     public String name;

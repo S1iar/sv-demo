@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +19,11 @@ public class CommonImportSelector implements ImportSelector {
 
         List<String> imports = new ArrayList<>();
         InputStream is = CommonImportSelector.class.getClassLoader().getResourceAsStream("common-imports");
+        if (is == null){
+            System.out.println("空的CommonImportSelector InputStream");
+        }
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
         String line;
         try {
             while ((line = br.readLine()) != null) {
@@ -31,10 +34,10 @@ public class CommonImportSelector implements ImportSelector {
         } finally {
             try {
                 br.close();
+                is.close();
             } catch (IOException e) {
                 log.error(e.getMessage());
             }
-
         }
 
 
