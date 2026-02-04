@@ -30,10 +30,10 @@ public class UserController {
     public Result login(@RequestBody User user){
 
         User u = userService.findUserByUserNameAndPassword(user);
-
         if(u == null) Result.error("登录失败：账号密码错误");
 
         String token = userService.login(u);
+
 
         return Result.success(token);
     }
