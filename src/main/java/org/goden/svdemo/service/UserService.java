@@ -6,6 +6,8 @@ import org.goden.svdemo.pojo.User;
 public interface UserService {
     User findUserByUserName(String username);
 
+    User findUserByUserNameAndPassword(User user);
+
     void register(User user);
 
     String login(User user);

@@ -4,6 +4,7 @@ import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,7 +14,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register",produces = MediaType.APPLICATION_JSON_VALUE)
     public Result register(@RequestBody User user){
 
         if(userService.findUserByUserName(user.getUsername()) != null){
@@ -25,10 +26,14 @@ public class UserController {
         return Result.success();
     }
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result login(@RequestBody User user){
 
-        String token = userService.login(user);
+        User u = userService.findUserByUserNameAndPassword(user);
+
+        if(u == null) Result.error("登录失败：账号密码错误");
+
+        String token = userService.login(u);
 
         return Result.success(token);
     }

@@ -30,16 +30,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(User user) {
+    public User findUserByUserNameAndPassword(User user){
         User u = userMapper.findUserByUserName(user.getUsername());
         String s = passWordService.encodePassword(user.getPassword());
-        if(!u.getPassword().equals(s)){
-            return "账号密码错误!";
+        if(u.getPassword().equals(s)){
+            u.setPassword("");
+            return u;
         }
+        return null;
+    }
 
+    @Override
+    public String login(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", u.getId());
-        claims.put("username", u.getUsername());
+        claims.put("id", user.getId());
+        claims.put("username", user.getUsername());
 
         String token  = JWT.create()
                 .withClaim("user", claims)
@@ -54,7 +59,7 @@ public class UserServiceImpl implements UserService {
         String password = user.getPassword();
         String s = passWordService.encodePassword(password);
 
-        System.out.println("输出:"+s);
+        System.out.println("输出:"+s.length());
         user.setPassword(s);
         userMapper.add(user);
     }
