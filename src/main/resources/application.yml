@@ -23,6 +23,24 @@ spring:
 #      additional-paths: src/main/java
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://localhost:3306
+#    url: jdbc:mysql://localhost:3306
+    url: jdbc:mariadb://localhost:3306/sv_demo?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UT
     username: root
-    password: admin123
+    password: 123
+
+mybatis-plus:
+  # 如果将来有XML文件，配置映射文件位置
+  # mapper-locations: classpath*:/mapper/**/*.xml
+  configuration:
+    # 开启驼峰命名自动映射
+    map-underscore-to-camel-case: true
+    # 在控制台打印SQL（开发环境开启）
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 全局逻辑删除字段名
+      logic-delete-field: deleted
+      # 逻辑已删除值
+      logic-delete-value: 1
+      # 逻辑未删除值
+      logic-not-delete-value: 0

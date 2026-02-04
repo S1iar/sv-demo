@@ -2,7 +2,12 @@ package org.goden.svdemo;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.goden.svdemo.mapper.UserMapper;
+import org.goden.svdemo.pojo.Result;
+import org.goden.svdemo.pojo.User;
+import org.goden.svdemo.service.UserService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
@@ -12,9 +17,12 @@ import java.util.Map;
 @SpringBootTest
 class SvDemoApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+	@Autowired
+	UserService userService;
+
+	@Autowired
+	UserMapper userMapper;
+
 
 	@Test
 	void getToken(){
