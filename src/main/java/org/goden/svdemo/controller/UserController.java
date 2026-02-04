@@ -34,7 +34,6 @@ public class UserController {
 
         String token = userService.login(u);
 
-
         return Result.success(token);
     }
 }
