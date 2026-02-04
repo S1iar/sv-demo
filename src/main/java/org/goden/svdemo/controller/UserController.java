@@ -25,7 +25,7 @@ public class UserController {
 
         return Result.success();
     }
-    //test
+
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result login(@RequestBody User user){
 
