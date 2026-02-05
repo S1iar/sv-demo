@@ -1,5 +1,6 @@
 package org.goden.svdemo.controller;
 
+import jakarta.validation.Valid;
 import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.service.UserService;
@@ -15,7 +16,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(value = "/register",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result register(@RequestBody User user){
+    public Result register(@Valid @RequestBody User user){
 
         if(userService.findUserByUserName(user.getUsername()) != null){
             return Result.error("该用户名已存在!");
@@ -27,11 +28,11 @@ public class UserController {
     }
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result login(@RequestBody User user){
+    public Result login(@Valid @RequestBody User user){
 
         User u = userService.findUserByUserNameAndPassword(user);
 
-        if(u == null) Result.error("登录失败：账号密码错误");
+        if(u == null) return Result.error("登录失败：账号密码错误");
 
         String token = userService.login(u);
 

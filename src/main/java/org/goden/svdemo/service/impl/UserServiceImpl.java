@@ -32,10 +32,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserByUserNameAndPassword(User user){
         User u = userMapper.findUserByUserName(user.getUsername());
-        String s = passWordService.encodePassword(user.getPassword());
-        if(u.getPassword().equals(s)){
-            u.setPassword("");
-            return u;
+        if(u != null) {
+            String s = passWordService.encodePassword(user.getPassword());
+            if(u.getPassword().equals(s)){
+                u.setPassword("");
+                return u;
+            }
         }
         return null;
     }
