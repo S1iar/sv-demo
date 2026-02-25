@@ -7,6 +7,7 @@ import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.service.PassWordService;
 import org.goden.svdemo.service.UserService;
+import org.goden.svdemo.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,13 +48,8 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
         claims.put("username", user.getUsername());
-
-        String token  = JWT.create()
-                .withClaim("user", claims)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 30))
-                .sign(Algorithm.HMAC256("SvDemoTest"));//密钥
-
-        return token;
+        //响应token
+        return JwtUtil.getToken(claims);
     }
 
     @Override

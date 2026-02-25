@@ -24,6 +24,8 @@ public class User {
 
     private String nickname;
 
+    @Pattern(regexp = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$",
+            message = "邮箱格式不正确")
     private String email;
 
     private String userPic;

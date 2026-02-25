@@ -1,6 +1,7 @@
 package org.goden.svdemo.handler;
 
 import org.goden.svdemo.pojo.Result;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,6 +9,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public Result handleValidationException(Exception ex) {
+        return Result.error(StringUtils.hasLength(ex.getMessage())?ex.getMessage() : "操作失败");
+    }
 
     /**
      * 处理参数校验异常
