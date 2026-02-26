@@ -16,7 +16,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(value = "/register",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result register(@Valid @RequestBody User user){
+    public Result<Void> register(@Valid @RequestBody User user){
 
         if(userService.findUserByUserName(user.getUsername()) != null){
             return Result.error("该用户名已存在!");
@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result login(@Valid @RequestBody User user){
+    public Result<String> login(@Valid @RequestBody User user){
 
         User u = userService.findUserByUserNameAndPassword(user);
 
