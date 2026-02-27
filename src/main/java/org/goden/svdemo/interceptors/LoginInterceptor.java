@@ -23,39 +23,25 @@ public class LoginInterceptor implements HandlerInterceptor {
             Map<String, Object> claims = JwtUtil.parseToken(token);
             return claims != null;
         }catch (TokenExpiredException e) {
-            String newToken = JwtUtil.refreshAccessToken(token);
-            returnUnauthorized(response, "Token已过期",newToken);
+            // token过期
+            returnUnauthorized(response, "登录已过期,请重新登录");
             return false;
         } catch (JWTVerificationException e) {
-            returnUnauthorized(response, "Token验证失败","");
+            returnUnauthorized(response, "Token验证失败");
             return false;
         } catch (Exception e){
             return false;
         }
     }
 
-//    private void returnUnauthorized(HttpServletResponse response, String message) throws IOException {
-//        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-//        response.setContentType("application/json;charset=UTF-8");
-//
-//        Map<String, Object> result = Map.of(
-//                "code", 401,
-//                "message", message,
-//                "timestamp", System.currentTimeMillis()
-//        );
-//
-//        response.getWriter().write(new ObjectMapper().writeValueAsString(result));
-//    }
-
-    private void returnUnauthorized(HttpServletResponse response, String message, String newToken) throws IOException {
+    private void returnUnauthorized(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json;charset=UTF-8");
 
         Map<String, Object> result = Map.of(
                 "code", 401,
                 "message", message,
-                "newToken", newToken,
-                "timeStamp", System.currentTimeMillis()
+                "timestamp", System.currentTimeMillis()
         );
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(result));
