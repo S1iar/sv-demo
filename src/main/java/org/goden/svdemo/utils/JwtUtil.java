@@ -23,7 +23,7 @@ public class JwtUtil {
         return JWT.require(Algorithm.HMAC256(KEY))
                 .build()
                 .verify(token)
-                .getClaim("claims")
+                .getClaim("user")
                 .asMap();
     }
 

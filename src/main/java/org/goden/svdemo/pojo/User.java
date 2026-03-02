@@ -1,5 +1,6 @@
 package org.goden.svdemo.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -16,6 +17,7 @@ public class User {
     @Size(min = 2, max = 10, message = "用户名长度必须在2-10个字符之间")
     private String username;
 
+    @JsonIgnore
     @NotBlank(message = "密码不能为空")
     @Size(min = 6, max = 16, message = "密码长度必须在6-16个字符之间")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z]).{6,16}$",

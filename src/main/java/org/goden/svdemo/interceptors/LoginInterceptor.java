@@ -5,6 +5,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.utils.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -21,15 +22,15 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         try{
             Map<String, Object> claims = JwtUtil.parseToken(token);
-            return claims != null;
+            //当获取token中的用户信息为空则判错
+            if(claims == null) throw new JWTVerificationException("Token验证失败");
+            return true;
         }catch (TokenExpiredException e) {
             // token过期
             returnUnauthorized(response, "登录已过期,请重新登录");
             return false;
         } catch (JWTVerificationException e) {
             returnUnauthorized(response, "Token验证失败");
-            return false;
-        } catch (Exception e){
             return false;
         }
     }
