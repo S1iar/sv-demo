@@ -5,8 +5,8 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.goden.svdemo.pojo.User;
-import org.goden.svdemo.utils.JwtUtil;
+import org.goden.svdemo.service.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -16,12 +16,16 @@ import java.util.Map;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    private JwtService jwtService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
         String token = request.getHeader("Authorization");
 
         try{
-            Map<String, Object> claims = JwtUtil.parseToken(token);
+            Map<String, Object> claims = jwtService.parseToken(token);
             //当获取token中的用户信息为空则判错
             if(claims == null) throw new JWTVerificationException("Token验证失败");
             return true;

@@ -1,6 +1,7 @@
 package org.goden.svdemo.pojo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -9,6 +10,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
+// @JsonAutoDetect注解会将影响所有  public 的 getter 方法导致反序列化和序列化都进行了JsonIgnore
+//@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class User {
 
     private Integer id;
@@ -17,7 +20,8 @@ public class User {
     @Size(min = 2, max = 10, message = "用户名长度必须在2-10个字符之间")
     private String username;
 
-    @JsonIgnore
+    // @JsonProperty 字段序列化时会被忽略，即它不会出现在生成的JSON中。但在反序列化时，JSON中的相应数据会被正常赋值给该属性
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank(message = "密码不能为空")
     @Size(min = 6, max = 16, message = "密码长度必须在6-16个字符之间")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z]).{6,16}$",

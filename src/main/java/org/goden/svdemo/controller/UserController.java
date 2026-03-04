@@ -3,10 +3,13 @@ package org.goden.svdemo.controller;
 import jakarta.validation.Valid;
 import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
+import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -14,6 +17,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping(value = "/register",produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<Void> register(@Valid @RequestBody User user){
@@ -29,6 +35,7 @@ public class UserController {
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> login(@Valid @RequestBody User user){
+        System.out.println(user.getPassword());
 
         User u = userService.findUserByUserNameAndPassword(user);
 
@@ -37,5 +44,13 @@ public class UserController {
         String token = userService.login(u);
 
         return Result.success(token);
+    }
+
+    @GetMapping(value = "/getUserInfo", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result<User> getUserInfoByToken(@RequestHeader(name = "Authorization") String token){
+        Map<String, Object> map = jwtService.parseToken(token);
+        String username = (String) map.get("username");
+        User user = userService.findUserByUserName(username);
+        return Result.success(user);
     }
 }

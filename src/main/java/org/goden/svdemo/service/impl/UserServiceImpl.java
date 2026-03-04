@@ -1,13 +1,10 @@
 package org.goden.svdemo.service.impl;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import org.goden.svdemo.mapper.UserMapper;
-import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
+import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.service.PassWordService;
 import org.goden.svdemo.service.UserService;
-import org.goden.svdemo.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +20,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public User findUserByUserName(String username) {
@@ -49,15 +49,13 @@ public class UserServiceImpl implements UserService {
         claims.put("id", user.getId());
         claims.put("username", user.getUsername());
         //响应token
-        return JwtUtil.getToken(claims);
+        return jwtService.getToken(claims);
     }
 
     @Override
     public void register(User user) {
         String password = user.getPassword();
         String s = passWordService.encodePassword(password);
-
-        System.out.println("输出:"+s.length());
         user.setPassword(s);
         userMapper.add(user);
     }
