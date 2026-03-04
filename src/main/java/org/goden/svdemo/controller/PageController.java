@@ -12,7 +12,7 @@ import java.util.List;
 public class PageController {
 
     @Autowired
-    PageService pageService;
+    private PageService pageService;
 
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<List<String>> list(){
