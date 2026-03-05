@@ -48,6 +48,7 @@ public class UserController {
         Map<String, Object> map = jwtService.parseToken(token);
         String username = (String) map.get("username");
         User user = userService.findUserByUserName(username);
+        if(user == null) return Result.error("该用户不存在!");
         return Result.success(user);
     }
 
