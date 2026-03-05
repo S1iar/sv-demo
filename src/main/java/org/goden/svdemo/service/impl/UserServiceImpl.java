@@ -7,8 +7,7 @@ import org.goden.svdemo.service.PassWordService;
 import org.goden.svdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByUserName(String username) {
-        User u = userMapper.findUserByUserName(username);
-        return u;
+        return userMapper.findUserByUserName(username);
     }
 
     @Override
@@ -50,6 +48,12 @@ public class UserServiceImpl implements UserService {
         claims.put("username", user.getUsername());
         //响应token
         return jwtService.getToken(claims);
+    }
+
+    @Override
+    public void update(User user) {
+        user.setUpdateTime(LocalDateTime.now());
+        userMapper.update(user);
     }
 
     @Override

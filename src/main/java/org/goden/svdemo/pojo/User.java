@@ -17,7 +17,7 @@ public class User {
     private Integer id;
 
     @NotBlank(message = "用户名不能为空")
-    @Size(min = 2, max = 10, message = "用户名长度必须在2-10个字符之间")
+    @Size(min = 5, max = 16, message = "用户名长度必须在5-16个字符之间")
     private String username;
 
     // @JsonProperty 字段序列化时会被忽略，即它不会出现在生成的JSON中。但在反序列化时，JSON中的相应数据会被正常赋值给该属性

@@ -1,6 +1,5 @@
 package org.goden.svdemo.service;
 
-import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
 
 public interface UserService {
@@ -11,4 +10,7 @@ public interface UserService {
     void register(User user);
 
     String login(User user);
+
+    void update(User user);
+
 }
