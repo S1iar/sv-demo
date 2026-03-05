@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.goden.svdemo.service.JwtService;
+import org.goden.svdemo.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -25,9 +26,12 @@ public class LoginInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
 
         try{
-            Map<String, Object> claims = jwtService.parseToken(token);
+            Map<String, Object> user = jwtService.parseToken(token);
             //当获取token中的用户信息为空则判错
-            if(claims == null) throw new JWTVerificationException("Token验证失败");
+            if(user == null) throw new JWTVerificationException("Token验证失败");
+            //将用户信息放入ThreadLocal
+            ThreadLocalUtil.set(user);
+
             return true;
         }catch (TokenExpiredException e) {
             // token过期
@@ -37,6 +41,11 @@ public class LoginInterceptor implements HandlerInterceptor {
             returnUnauthorized(response, "Token验证失败");
             return false;
         }
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        ThreadLocalUtil.remove();
     }
 
     private void returnUnauthorized(HttpServletResponse response, String message) throws IOException {
