@@ -1,6 +1,7 @@
 package org.goden.svdemo.controller;
 
 import jakarta.validation.Valid;
+import org.goden.svdemo.anno.ValidationGroups;
 import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.service.JwtService;
@@ -8,6 +9,7 @@ import org.goden.svdemo.service.UserService;
 import org.goden.svdemo.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -23,7 +25,7 @@ public class UserController {
     private JwtService jwtService;
 
     @PostMapping(value = "/register",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result<Void> register(@Valid @RequestBody User user){
+    public Result<Void> register(@Validated(ValidationGroups.Create.class) @RequestBody User user){
 
         if(userService.findUserByUserName(user.getUsername()) != null){
             return Result.error("该用户名已存在!");
@@ -53,9 +55,11 @@ public class UserController {
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result<String> update(@RequestBody User user){
+    public Result<String> update(@Validated(ValidationGroups.Update.class) @RequestBody User user){
         //这里需要获取token中的用户
-//        Object o = ThreadLocalUtil.get();
+        Map<String, Object> token = ThreadLocalUtil.get();
+        Integer id = (Integer) token.get("id");
+        user.setId(id);
         userService.update(user);
         return Result.success();
     }
