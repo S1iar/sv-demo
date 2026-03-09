@@ -7,6 +7,7 @@ import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.service.UserService;
 import org.goden.svdemo.utils.ThreadLocalUtil;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -56,11 +57,22 @@ public class UserController {
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> update(@Validated(ValidationGroups.Update.class) @RequestBody User user){
-        //这里需要获取token中的用户
-        Map<String, Object> token = ThreadLocalUtil.get();
-        Integer id = (Integer) token.get("id");
-        user.setId(id);
         userService.update(user);
+        return Result.success();
+    }
+
+    @PatchMapping(value = "/updateAvatar", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result<String> updateAvatar(@RequestParam @URL String avatarUrl){
+        if(avatarUrl == null || avatarUrl.isEmpty()){
+            return Result.error("头像不能为空!");
+        }
+        userService.updateAvatar(avatarUrl);
+        return Result.success();
+    }
+
+    @PatchMapping(value = "/updatePassWord", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result<String> updatePassWord(@RequestBody @Validated(ValidationGroups.PasswordCheck.class) User user){
+
         return Result.success();
     }
 }

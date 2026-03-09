@@ -5,6 +5,7 @@ import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.service.PassWordService;
 import org.goden.svdemo.service.UserService;
+import org.goden.svdemo.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -52,8 +53,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(User user) {
-        user.setUpdateTime(LocalDateTime.now());
+        Map<String, Object> token = ThreadLocalUtil.get();
+        Integer id = (Integer) token.get("id");
+        user.setId(id);
         userMapper.updateById(user);
+    }
+
+    @Override
+    public void updateAvatar(String avatarUrl) {
+        Map<String, Object> token = ThreadLocalUtil.get();
+        Integer id = (Integer) token.get("id");
+        User user = new User();
+        user.setId(id);
+        user.setUserPic(avatarUrl);
+        userMapper.updateAvatarById(user);
     }
 
     @Override

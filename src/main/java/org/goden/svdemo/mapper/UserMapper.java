@@ -15,6 +15,9 @@ public interface UserMapper {
             " values(#{username},#{password},now(),now())")
     void add(User user);
 
-    @Update("update user set nickname=#{nickname},email=#{email},user_pic=#{userPic},update_time=#{updateTime} where id=#{id}")
+    @Update("update user set nickname=#{nickname},email=#{email},user_pic=#{userPic},update_time=now() where id=#{id}")
     void updateById(User user);
+
+    @Update("update user set user_pic=#{userPic},update_time=now() where id=#{id}")
+    void updateAvatarById(User user);
 }
