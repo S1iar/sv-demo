@@ -5,7 +5,6 @@ package org.goden.svdemo.exception;
  * 用于在业务逻辑中抛出明确的异常信息
  */
 public class BusinessException extends RuntimeException {
-
     /**
      * 错误码
      */
