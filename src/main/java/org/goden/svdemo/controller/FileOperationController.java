@@ -16,7 +16,11 @@ public class FileOperationController {
 
     @PostMapping("/image")
     public Result<String> uploadImage(@RequestParam("file") MultipartFile file) {
-        String s = fileOperationService.uploadImage(file);
-        return Result.success(s);
+        try {
+            String message = fileOperationService.uploadImage(file);
+            return Result.success(message);
+        } catch (Exception e) {
+            return Result.error("上传失败，请稍后重试");
+        }
     }
 }

@@ -1,5 +1,6 @@
 package org.goden.svdemo.handler;
 
+import org.goden.svdemo.exception.BusinessException;
 import org.goden.svdemo.pojo.Result;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
@@ -36,5 +37,15 @@ public class GlobalExceptionHandler {
 
         // 4. 返回自定义的 Result 对象，状态码设为 400 等表示客户端错误
         return Result.error(errorMsg.toString());
+    }
+
+    /**
+     * 处理业务逻辑异常
+     * 假设你有一个自定义的业务异常类 BusinessException
+     */
+    @ExceptionHandler(BusinessException.class)
+    public Result<Void> handleBusinessException(BusinessException e) {
+        // 这里使用错误码1，或从异常对象e中获取自定义的业务错误码
+        return Result.error(e.getMessage()); // 或 Result.error(e.getCode(), e.getMessage());
     }
 }
