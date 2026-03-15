@@ -15,4 +15,5 @@ public interface UserService {
 
     void updateAvatar(String avatarUrl);
 
+    void updatePassWord(User user);
 }

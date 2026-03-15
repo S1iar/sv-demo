@@ -8,7 +8,6 @@ import org.goden.svdemo.service.UserService;
 import org.goden.svdemo.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,6 +66,14 @@ public class UserServiceImpl implements UserService {
         user.setId(id);
         user.setUserPic(avatarUrl);
         userMapper.updateAvatarById(user);
+    }
+
+    @Override
+    public void updatePassWord(User user) {
+        Map<String, Object> token = ThreadLocalUtil.get();
+        Integer id = (Integer) token.get("id");
+        user.setId(id);
+        userMapper.updatePassWord(user);
     }
 
     @Override

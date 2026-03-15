@@ -6,7 +6,6 @@ import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.service.UserService;
-import org.goden.svdemo.utils.ThreadLocalUtil;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,7 +25,7 @@ public class UserController {
     private JwtService jwtService;
 
     @PostMapping(value = "/register",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result<Void> register(@Validated(ValidationGroups.Create.class) @RequestBody User user){
+    public Result<String> register(@Validated(ValidationGroups.Create.class) @RequestBody User user){
 
         if(userService.findUserByUserName(user.getUsername()) != null){
             return Result.error("该用户名已存在!");
@@ -34,7 +33,7 @@ public class UserController {
 
         userService.register(user);
 
-        return Result.success();
+        return Result.success("注册成功!");
     }
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -58,7 +57,7 @@ public class UserController {
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> update(@Validated(ValidationGroups.Update.class) @RequestBody User user){
         userService.update(user);
-        return Result.success();
+        return Result.success("更新成功!");
     }
 
     @PatchMapping(value = "/updateAvatar", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,12 +66,12 @@ public class UserController {
             return Result.error("头像不能为空!");
         }
         userService.updateAvatar(avatarUrl);
-        return Result.success();
+        return Result.success("头像已更新!");
     }
 
     @PatchMapping(value = "/updatePassWord", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> updatePassWord(@RequestBody @Validated(ValidationGroups.PasswordCheck.class) User user){
-
+        userService.updatePassWord(user);
         return Result.success();
     }
 }
