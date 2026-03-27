@@ -22,6 +22,7 @@ public class Aria2ServiceImpl implements Aria2Service {
                 new String[]{magnetLink}
         });
 
+
         Map response = restTemplate.postForObject(ARIA2_RPC_URL, request, Map.class);
         return (String) ((Map)response.get("result")).get("gid");
     }
