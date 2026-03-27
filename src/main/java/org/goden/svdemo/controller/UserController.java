@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @PatchMapping(value = "/updatePassWord", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result<String> updatePassWord(@RequestBody @Validated(ValidationGroups.PasswordCheck.class) User user){
+    public Result<String> updatePassWord(@RequestBody Map<String, String> params){
 
         return Result.success();
     }

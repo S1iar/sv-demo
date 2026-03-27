@@ -1,11 +1,9 @@
 package org.goden.svdemo.service.impl;
 
 import org.goden.svdemo.exception.BusinessException;
-import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.service.FileOperationService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
