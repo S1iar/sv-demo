@@ -20,4 +20,7 @@ public interface UserMapper {
 
     @Update("update user set user_pic=#{userPic},update_time=now() where id=#{id}")
     void updateAvatarById(User user);
+
+    @Update("update user set password=#{password},update_time=now() where id=#{id}")
+    void updatePassWord(User user);
 }
