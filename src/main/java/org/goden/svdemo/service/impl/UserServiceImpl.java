@@ -32,23 +32,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserByUserNameAndPassword(User user){
-        User u = userMapper.findUserByUserName(user.getUsername());
-        if(u != null) {
-            String s = passWordService.encodePassword(user.getPassword());
-            if(u.getPassword().equals(s)){
-                u.setPassword("");
-                return u;
-            }
-        }
-        return null;
+    public User findUserByUserNameAndPassword(String username, String password){
+        String encodedPassword = passWordService.encodePassword(password);
+        User user = userMapper.findUserByUserNameAndPassword(username,encodedPassword);
+        if(user == null) throw new BusinessException("账号密码错误!");
+
+        user.setPassword("");
+        return user;
     }
 
     @Override
     public String login(User user) {
 
-        User u = findUserByUserNameAndPassword(user);
-        if(u == null) throw new BusinessException("登录失败：账号密码错误!");
+        User u = findUserByUserNameAndPassword(user.getUsername(), user.getPassword());
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", u.getId());
@@ -116,14 +112,16 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("重置密码和二次验证密码不一致!");
         }
 
-        user.setPassword(newPassWord);
+        String s = passWordService.encodePassword(newPassWord);
+        user.setPassword(s);
 
         userMapper.updatePassWord(user);
     }
 
     @Override
     public void register(User user) {
-        if(findUserByUserName(user.getUsername()) != null) throw new BusinessException("该用户名已存在!");
+        User u = userMapper.findUserByUserName(user.getUsername());
+        if(u != null) throw new BusinessException("该用户名已存在!");
 
         String password = user.getPassword();
         String s = passWordService.encodePassword(password);

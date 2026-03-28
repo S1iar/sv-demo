@@ -7,7 +7,7 @@ import java.util.Map;
 public interface UserService {
     User findUserByUserName(String username);
 
-    User findUserByUserNameAndPassword(User user);
+    User findUserByUserNameAndPassword(String username, String password);
 
     void register(User user);
 
