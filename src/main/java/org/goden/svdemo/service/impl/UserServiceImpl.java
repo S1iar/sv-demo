@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> token = ThreadLocalUtil.get();
         Integer id = (Integer) token.get("id");
         user.setId(id);
+        //仅更新nickname email userPic
         userMapper.updateById(user);
     }
 

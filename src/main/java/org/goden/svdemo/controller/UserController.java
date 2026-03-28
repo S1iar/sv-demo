@@ -43,7 +43,7 @@ public class UserController {
         return Result.success(user);
     }
 
-    @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> update(@Validated(ValidationGroups.Update.class) @RequestBody User user){
         userService.update(user);
         return Result.success("更新成功!");
