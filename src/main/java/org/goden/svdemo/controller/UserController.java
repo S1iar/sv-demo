@@ -5,14 +5,12 @@ import org.goden.svdemo.anno.ValidationGroups;
 import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.service.JwtService;
-import org.goden.svdemo.service.PassWordService;
 import org.goden.svdemo.service.UserService;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 @RestController
@@ -24,9 +22,6 @@ public class UserController {
 
     @Autowired
     private JwtService jwtService;
-
-    @Autowired
-    private PassWordService passWordService;
 
     @PostMapping(value = "/register",produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> register(@Validated(ValidationGroups.Create.class) @RequestBody User user){
@@ -63,6 +58,6 @@ public class UserController {
     @PatchMapping(value = "/updatePassWord", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> updatePassWord(@RequestBody Map<String,String> params){
         userService.updatePassWord(params);
-        return Result.success();
+        return Result.success("密码更新成功!");
     }
 }
