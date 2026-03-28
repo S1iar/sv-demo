@@ -1,6 +1,6 @@
 package org.goden.svdemo.controller;
 
-import jakarta.validation.Valid;
+//import jakarta.validation.Valid;
 import org.goden.svdemo.anno.ValidationGroups;
 import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
