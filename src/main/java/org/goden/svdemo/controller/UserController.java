@@ -5,6 +5,7 @@ import org.goden.svdemo.anno.ValidationGroups;
 import org.goden.svdemo.pojo.Result;
 import org.goden.svdemo.pojo.User;
 import org.goden.svdemo.service.JwtService;
+import org.goden.svdemo.service.PassWordService;
 import org.goden.svdemo.service.UserService;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,24 +25,18 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private PassWordService passWordService;
+
     @PostMapping(value = "/register",produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> register(@Validated(ValidationGroups.Create.class) @RequestBody User user){
-
-        if(userService.findUserByUserName(user.getUsername()) != null){
-            return Result.error("该用户名已存在!");
-        }
-
         userService.register(user);
-
         return Result.success("注册成功!");
     }
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result<String> login(@Valid @RequestBody User user){
-        User u = userService.findUserByUserNameAndPassword(user);
-        if(u == null) return Result.error("登录失败：账号密码错误");
-
-        String token = userService.login(u);
+    public Result<String> login(@Validated(ValidationGroups.Login.class) @RequestBody User user){
+        String token = userService.login(user);
         return Result.success(token);
     }
 
@@ -50,7 +45,6 @@ public class UserController {
         Map<String, Object> map = jwtService.parseToken(token);
         String username = (String) map.get("username");
         User user = userService.findUserByUserName(username);
-        if(user == null) return Result.error("该用户不存在!");
         return Result.success(user);
     }
 
@@ -62,16 +56,13 @@ public class UserController {
 
     @PatchMapping(value = "/updateAvatar", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> updateAvatar(@RequestParam @URL String avatarUrl){
-        if(avatarUrl == null || avatarUrl.isEmpty()){
-            return Result.error("头像不能为空!");
-        }
         userService.updateAvatar(avatarUrl);
         return Result.success("头像已更新!");
     }
 
     @PatchMapping(value = "/updatePassWord", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result<String> updatePassWord(@RequestBody @Validated(ValidationGroups.PasswordCheck.class) User user){
-        userService.updatePassWord(user);
+    public Result<String> updatePassWord(@RequestBody Map<String,String> params){
+        userService.updatePassWord(params);
         return Result.success();
     }
 }

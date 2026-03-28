@@ -2,6 +2,8 @@ package org.goden.svdemo.service;
 
 import org.goden.svdemo.pojo.User;
 
+import java.util.Map;
+
 public interface UserService {
     User findUserByUserName(String username);
 
@@ -15,5 +17,5 @@ public interface UserService {
 
     void updateAvatar(String avatarUrl);
 
-    void updatePassWord(User user);
+    void updatePassWord(Map<String,String> params);
 }
