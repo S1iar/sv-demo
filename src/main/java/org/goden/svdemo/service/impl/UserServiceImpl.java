@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
     public void update(User user) {
         Map<String, Object> token = ThreadLocalUtil.get();
         Integer id = (Integer) token.get("id");
+        if(id == null) throw new BusinessException("请重新登录!");
         user.setId(id);
         //仅更新nickname email userPic
         userMapper.updateById(user);
@@ -84,7 +85,7 @@ public class UserServiceImpl implements UserService {
         String rePassWord = params.get("rePassWord");
 
         if(oldPassWord.isEmpty()){
-            throw new BusinessException("旧密码不能为空!");
+            throw new BusinessException("原密码不能为空!");
         }
         if(newPassWord.isEmpty()){
             throw new BusinessException("新密码不能为空!");
@@ -99,7 +100,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.findUserById(id);
         String password = user.getPassword();
         if(!passWordService.encodePassword(password).equals(oldPassWord)){
-            throw new BusinessException("旧密码错误!");
+            throw new BusinessException("原密码错误!");
         }
 
         if(!(newPassWord.length() >= 6 && newPassWord.length() <= 16)){
