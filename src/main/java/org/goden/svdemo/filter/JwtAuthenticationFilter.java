@@ -34,17 +34,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             if (token != null) {
-                // 1. 解析Token (与原Interceptor逻辑一致)
+                // 1. 解析Token
                 Map<String, Object> user = jwtService.parseToken(token);
                 if (user == null) {
                     throw new JWTVerificationException("Token验证失败");
                 }
 
                 // 2. 创建Authentication对象并存入SecurityContextHolder (替代ThreadLocal)
-                // 这里简单地将用户ID作为principal。您可以根据需要构建更复杂的UserDetails对象。
-                String userId = (String) user.get("userId"); // 假设token中包含userId字段
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+                // 这里简单地将用户ID作为principal。根据需要构建更复杂的UserDetails对象。
+                String userId = (String) user.get("userId");
+                String userName = (String) user.get("username");
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             // 继续执行过滤器链
@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    // 返回401响应的方法，与原Interceptor逻辑一致
+    // 返回401响应的方法
     private void returnUnauthorized(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json;charset=UTF-8");

@@ -28,8 +28,16 @@ public class SecurityConfig {
                         // 配置无需认证的端点 (对应原WebConfig中的excludePathPatterns)
                         .requestMatchers(
                                 "/user/login",
-                                "/user/register")
-                        .permitAll()
+                                "/user/register").permitAll()
+                        // 1. 基于角色的访问控制 (使用 hasRole, 框架会自动匹配"ROLE_"前缀)
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // 等价于 hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/user/profile").hasAnyRole("ADMIN", "USER")
+
+//                        // 2. 基于权限（Authority）的访问控制 (更细粒度)
+//                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("product:create")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/orders/*").hasAuthority("order:delete")
+//                        .requestMatchers(HttpMethod.GET, "/api/statistics").hasAuthority("stat:read")
+
                         // 其他所有请求都需要认证
                         .anyRequest().authenticated()
                 )

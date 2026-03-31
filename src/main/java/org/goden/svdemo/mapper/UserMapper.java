@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.goden.svdemo.pojo.User;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
     @Select("select * from user where username =#{username}")
@@ -29,4 +31,7 @@ public interface UserMapper {
 
     @Update("update user set password=#{password},update_time=now() where id=#{id}")
     void updatePassWord(User user);
+
+    @Select("select * from sys_role where id=#{id}")
+    List<String> findPermissionsByUserId(Integer id);
 }
