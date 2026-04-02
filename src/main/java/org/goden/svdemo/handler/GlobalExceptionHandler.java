@@ -1,7 +1,7 @@
 package org.goden.svdemo.handler;
 
 import org.goden.svdemo.exception.BusinessException;
-import org.goden.svdemo.pojo.Result;
+import org.goden.svdemo.entity.Result;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

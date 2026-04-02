@@ -1,4 +1,4 @@
-package org.goden.svdemo.pojo;
+package org.goden.svdemo.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package org.goden.svdemo.controller;
 
-import org.goden.svdemo.pojo.Result;
+import org.goden.svdemo.entity.Result;
 import org.goden.svdemo.service.PageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

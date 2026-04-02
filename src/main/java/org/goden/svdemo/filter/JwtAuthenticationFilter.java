@@ -8,11 +8,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.goden.svdemo.service.JwtService;
+import org.goden.svdemo.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
@@ -24,6 +26,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -40,11 +45,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     throw new JWTVerificationException("Token验证失败");
                 }
 
+                String username = (String) user.get("username");
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
                 // 2. 创建Authentication对象并存入SecurityContextHolder (替代ThreadLocal)
-                // 这里简单地将用户ID作为principal。根据需要构建更复杂的UserDetails对象。
-                String userId = (String) user.get("userId");
-                String userName = (String) user.get("username");
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, Collections.emptyList());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             // 继续执行过滤器链

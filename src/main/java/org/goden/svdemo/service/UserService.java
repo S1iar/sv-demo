@@ -1,6 +1,6 @@
 package org.goden.svdemo.service;
 
-import org.goden.svdemo.pojo.User;
+import org.goden.svdemo.entity.User;
 
 import java.util.Map;
 

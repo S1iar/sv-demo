@@ -1,12 +1,12 @@
 package org.goden.svdemo.service.impl;
 
-import org.goden.svdemo.pojo.User;
+import org.goden.svdemo.entity.User;
 import org.goden.svdemo.mapper.UserMapper;
+import org.goden.svdemo.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;

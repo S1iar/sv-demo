@@ -1,6 +1,6 @@
 package org.goden.svdemo.config;
 
-import org.goden.svdemo.pojo.YmlTest;
+import org.goden.svdemo.entity.YmlTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

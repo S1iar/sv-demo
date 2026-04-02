@@ -1,4 +1,4 @@
-package org.goden.svdemo.pojo;
+package org.goden.svdemo.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
@@ -41,6 +41,16 @@ public class User {
     private String email;
 
     private String userPic;
+
+    private String phone;
+
+    private boolean enabled;
+
+    private boolean accountNonExpired;
+
+    private boolean credentialsNonExpired;
+
+    private boolean accountNonLocked;
 
     private LocalDateTime createTime;
 

@@ -2,7 +2,7 @@ package org.goden.svdemo.service.impl;
 
 import org.goden.svdemo.exception.BusinessException;
 import org.goden.svdemo.mapper.UserMapper;
-import org.goden.svdemo.pojo.User;
+import org.goden.svdemo.entity.User;
 import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.service.PassWordService;
 import org.goden.svdemo.service.UserService;
