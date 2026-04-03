@@ -19,14 +19,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserMapper userMapper; // 您的数据访问层
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUserID(Integer id) throws UsernameNotFoundException {
         // 1. 根据用户名查询用户实体
-        User user = userMapper.findUserByUserName(username);
+        User user = userMapper.findUserById(id);
         if (user == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
-
-        String currentUserId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // 2. 查询该用户拥有的所有权限（或角色）代码
         // 示例1：查询权限码列表（如 ["user:add", "order:query"]）

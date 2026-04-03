@@ -45,8 +45,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     throw new JWTVerificationException("Token验证失败");
                 }
 
-                String username = (String) user.get("username");
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                Integer id = (Integer) user.get("id");
+                UserDetails userDetails = userDetailsService.loadUserByUserID(id);
 
                 // 2. 创建Authentication对象并存入SecurityContextHolder (替代ThreadLocal)
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, Collections.emptyList());
