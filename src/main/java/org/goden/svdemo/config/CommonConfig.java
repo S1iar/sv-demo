@@ -1,5 +1,6 @@
 package org.goden.svdemo.config;
 
+import org.goden.svdemo.entity.Province;
 import org.goden.svdemo.entity.YmlTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,12 @@ public class CommonConfig {
     // 如CommonConfig不在 @SpringBootApplication 扫描范围内 可在@SpringBootApplication 下使用@Import(CommonConfig.class) 注解使CommonConfig被扫描到
     // 常用的是CommonConfigSelector
     @Bean
-    public YmlTest testObject(){
+    public YmlTest ymlTest(){
         return new YmlTest();
+    }
+
+    @Bean
+    public Province province(YmlTest ymlTest){
+        return new Province();
     }
 }
