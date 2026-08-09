@@ -30,8 +30,8 @@ public class SecurityConfig {
                                 "/user/login",
                                 "/user/register").permitAll()
                         // 1. 基于角色的访问控制 (使用 hasRole, 框架会自动匹配"ROLE_"前缀)
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // 等价于 hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/user/profile").hasAnyRole("ADMIN", "USER")
+//                        .requestMatchers("/admin/**").hasRole("ADMIN") // 等价于 hasAuthority("ROLE_ADMIN")
+//                        .requestMatchers("/user/profile").hasAnyRole("ADMIN", "USER")
 
 //                        // 2. 基于权限（Authority）的访问控制 (更细粒度)
 //                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("product:create")

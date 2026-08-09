@@ -20,7 +20,7 @@ public class CommonImportSelector implements ImportSelector {
         List<String> imports = new ArrayList<>();
         InputStream is = CommonImportSelector.class.getClassLoader().getResourceAsStream("common-imports");
         if (is == null){
-            System.out.println("CommonImportSelector InputStream is Null");
+            System.out.println("/resources/common-imports :CommonImportSelector InputStream is Null");
         }
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
