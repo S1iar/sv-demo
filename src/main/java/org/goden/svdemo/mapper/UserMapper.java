@@ -18,8 +18,8 @@ public interface UserMapper {
     @Select("select * from user where id =#{id}")
     User findUserById(Integer id);
 
-    @Insert("insert into user(username,password,create_time,update_time)" +
-            " values(#{username},#{password},now(),now())")
+    @Insert("insert into user(username,password,email,create_time,update_time)" +
+            " values(#{username},#{password},#{email},now(),now())")
     void add(User user);
 
     @Update("update user set nickname=#{nickname},email=#{email},user_pic=#{userPic},update_time=now() where id=#{id}")

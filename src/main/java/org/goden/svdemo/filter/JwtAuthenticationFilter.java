@@ -18,7 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -29,6 +31,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    // 定义不需要JWT验证的路径
+    private static final List<String> EXCLUDED_PATHS = Arrays.asList(
+            "/user/login",
+            "/user/register"
+    );
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return EXCLUDED_PATHS.stream().anyMatch(path::endsWith);
+    }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -62,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             returnUnauthorized(response, "Token验证失败");
         } finally {
             // 请求结束后清理SecurityContext (替代Interceptor的afterCompletion逻辑)
-            // 通常由SecurityContextPersistenceFilter处理，但在此明确清理是良好实践
+            // 通常由SecurityContextPersistenceFilter处理,但在此明确清理是良好实践
              SecurityContextHolder.clearContext();
         }
     }
