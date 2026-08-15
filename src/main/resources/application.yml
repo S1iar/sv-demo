@@ -16,6 +16,10 @@ yml-test:
     - name: '行医'
       age: 44
 
+jwt:
+#  secret: a-very-long-and-random-secret-key-that-should-be-at-least-256-bit
+  secret: 'SvDemoTest'
+
 spring:
   servlet:
     multipart:

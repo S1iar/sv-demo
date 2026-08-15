@@ -23,7 +23,7 @@ class SvDemoApplicationTests {
 
 
 	@Test
-	void getToken(){
+	void generateToken(){
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("id", "1");
 		claims.put("username", "test");

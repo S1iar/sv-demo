@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.service.UserDetailsService;
+import org.goden.svdemo.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -78,6 +79,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 请求结束后清理SecurityContext (替代Interceptor的afterCompletion逻辑)
             // 通常由SecurityContextPersistenceFilter处理,但在此明确清理是良好实践
              SecurityContextHolder.clearContext();
+            ThreadLocalUtil.remove();
         }
     }
 

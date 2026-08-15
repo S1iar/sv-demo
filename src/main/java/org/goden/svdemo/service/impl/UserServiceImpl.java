@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         claims.put("id", u.getId());
         claims.put("username", u.getUsername());
         //响应token
-        return jwtService.getToken(claims);
+        return jwtService.generateToken(claims);
     }
 
     @Override
