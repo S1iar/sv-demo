@@ -2,11 +2,11 @@ package org.goden.svdemo.service.impl;
 
 import cn.hutool.crypto.SmUtil;
 import cn.hutool.crypto.symmetric.SM4;
-import org.goden.svdemo.service.PassWordService;
+import org.goden.svdemo.service.PasswordService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PassWordServiceImpl implements PassWordService {
+public class PasswordServiceImpl implements PasswordService {
 
     // 特别注意：密钥必须是16字节（128位）
     // 示例密钥，生产环境务必从安全的环境变量或配置中心获取，不要硬编码！

@@ -1,6 +1,6 @@
 package org.goden.svdemo.service;
 
-public interface PassWordService {
+public interface PasswordService {
     String encodePassword(String rawPassword);
 
     String matches(String encodedPassword);

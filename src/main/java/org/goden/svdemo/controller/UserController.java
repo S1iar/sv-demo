@@ -55,9 +55,9 @@ public class UserController {
         return Result.success("头像已更新!");
     }
 
-    @PatchMapping(value = "/updatePassWord", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result<String> updatePassWord(@RequestBody Map<String,String> params){
-        userService.updatePassWord(params);
+    @PatchMapping(value = "/updatePassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result<String> updatePassword(@RequestBody Map<String,String> params){
+        userService.updatePassword(params);
         return Result.success("密码更新成功!");
     }
 }

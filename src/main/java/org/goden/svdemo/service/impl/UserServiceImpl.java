@@ -4,11 +4,13 @@ import org.goden.svdemo.exception.BusinessException;
 import org.goden.svdemo.mapper.UserMapper;
 import org.goden.svdemo.entity.User;
 import org.goden.svdemo.service.JwtService;
-import org.goden.svdemo.service.PassWordService;
+import org.goden.svdemo.service.PasswordService;
 import org.goden.svdemo.service.UserService;
 import org.goden.svdemo.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +18,7 @@ import java.util.Map;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private PassWordService passWordService;
+    private PasswordService passwordService;
 
     @Autowired
     private UserMapper userMapper;
@@ -33,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByUserNameAndPassword(String username, String password){
-        String encodedPassword = passWordService.encodePassword(password);
+        String encodedPassword = passwordService.encodePassword(password);
         User user = userMapper.findUserByUserNameAndPassword(username,encodedPassword);
         if(user == null) throw new BusinessException("账号密码错误!");
 
@@ -79,18 +81,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updatePassWord(Map<String,String> params) {
-        String oldPassWord = params.get("oldPassWord");
-        String newPassWord = params.get("newPassWord");
-        String rePassWord = params.get("rePassWord");
+    public void updatePassword(Map<String,String> params) {
+        String oldPassword = params.get("oldPassword");
+        String newPassword = params.get("newPassword");
+        String rePassword = params.get("rePassword");
 
-        if(oldPassWord.isEmpty()){
+        if(!StringUtils.hasText(oldPassword)){
             throw new BusinessException("原密码不能为空!");
         }
-        if(newPassWord.isEmpty()){
+        if(!StringUtils.hasText(newPassword)){
             throw new BusinessException("新密码不能为空!");
         }
-        if(rePassWord.isEmpty()){
+        if(!StringUtils.hasText(rePassword)){
             throw new BusinessException("二次验证密码不能为空!");
         }
 
@@ -99,25 +101,24 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.findUserById(id);
         String password = user.getPassword();
-        if(!passWordService.encodePassword(password).equals(oldPassWord)){
+        if(!passwordService.encodePassword(oldPassword).equals(password)){
             throw new BusinessException("原密码错误!");
         }
 
-        if(!(newPassWord.length() >= 6 && newPassWord.length() <= 16)){
+        if(!(newPassword.length() >= 6 && newPassword.length() <= 16)){
             throw new BusinessException("密码长度必须在6-16个字符之间!");
         }
-        if(!newPassWord.matches("^(?=.*[0-9])(?=.*[a-zA-Z]).{6,16}$")){
+        if(!newPassword.matches("^(?=.*[0-9])(?=.*[a-zA-Z]).{6,16}$")){
             throw new BusinessException("密码必须包含至少一个字母和一个数字!");
         }
-
-        if(!newPassWord.equals(rePassWord)){
+        if(!newPassword.equals(rePassword)){
             throw new BusinessException("重置密码和二次验证密码不一致!");
         }
 
-        String s = passWordService.encodePassword(newPassWord);
+        String s = passwordService.encodePassword(newPassword);
         user.setPassword(s);
 
-        userMapper.updatePassWord(user);
+        userMapper.updatePassword(user);
     }
 
     @Override
@@ -126,7 +127,7 @@ public class UserServiceImpl implements UserService {
         if(u != null) throw new BusinessException("该用户名已存在!");
 
         String password = user.getPassword();
-        String s = passWordService.encodePassword(password);
+        String s = passwordService.encodePassword(password);
         user.setPassword(s);
         userMapper.add(user);
     }

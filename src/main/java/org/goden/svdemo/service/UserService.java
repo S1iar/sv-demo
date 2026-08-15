@@ -17,5 +17,5 @@ public interface UserService {
 
     void updateAvatar(String avatarUrl);
 
-    void updatePassWord(Map<String,String> params);
+    void updatePassword(Map<String,String> params);
 }

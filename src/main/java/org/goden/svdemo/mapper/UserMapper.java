@@ -29,7 +29,7 @@ public interface UserMapper {
     void updateAvatarById(User user);
 
     @Update("update user set password=#{password},update_time=now() where id=#{id}")
-    void updatePassWord(User user);
+    void updatePassword(User user);
 
     @Select("select * from role where id=#{id}")
     List<String> findPermissionsByUserId(Integer id);
