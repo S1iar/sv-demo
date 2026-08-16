@@ -15,11 +15,13 @@ import java.util.Map;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    //密钥
-//    private static final String secretKey =  "SvDemoTest";
     //密钥从application.yml或者环境变量获取
     @Value("${jwt.secret}")
     private String secretKey;
+
+    // 单位毫秒(目前5分钟)
+    @Value("${jwt.refresh-grace-period:300000}")
+    private long refreshGracePeriod;
 
     @Override
     public String generateToken(Map<String, Object> claims){
@@ -50,7 +52,7 @@ public class JwtServiceImpl implements JwtService {
             // 如果过期，允许在宽限期内刷新（例如过期后5分钟内）
             DecodedJWT decoded = JWT.decode(token);
             Date expiresAt = decoded.getExpiresAt();
-            if (expiresAt != null && System.currentTimeMillis() - expiresAt.getTime() <= 300_000) {
+            if (expiresAt != null && System.currentTimeMillis() - expiresAt.getTime() <= refreshGracePeriod) {
                 Map<String, Object> claims = decoded.getClaim("user").asMap();
                 return generateToken(claims);
             }

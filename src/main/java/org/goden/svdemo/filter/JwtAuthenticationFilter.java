@@ -33,6 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     // 定义不需要JWT验证的路径
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
             "/user/login",
@@ -66,15 +68,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 2. 创建Authentication对象并存入SecurityContextHolder (替代ThreadLocal)
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, Collections.emptyList());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            }else {
+                //未携带token
+                returnUnauthorized(response, "账号未登录!");
+                return;  // 终止过滤器链
             }
             // 继续执行过滤器链
             filterChain.doFilter(request, response);
         } catch (TokenExpiredException e) {
             // token过期
-            returnUnauthorized(response, "登录已过期,请重新登录");
+            returnUnauthorized(response, "登录已过期,请重新登录!");
         } catch (JWTVerificationException e) {
             // token验证失败
-            returnUnauthorized(response, "Token验证失败");
+            returnUnauthorized(response, "Token验证失败!");
         } finally {
             // 请求结束后清理SecurityContext (替代Interceptor的afterCompletion逻辑)
             // 通常由SecurityContextPersistenceFilter处理,但在此明确清理是良好实践
@@ -92,6 +98,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "message", message,
                 "timestamp", System.currentTimeMillis()
         );
-        response.getWriter().write(new ObjectMapper().writeValueAsString(result));
+        response.getWriter().write(OBJECT_MAPPER.writeValueAsString(result));
     }
 }
