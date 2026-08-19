@@ -41,9 +41,9 @@ public interface UserMapper {
 
     // 查询用户拥有的所有权限（通过角色间接获得）
     @Select("SELECT DISTINCT p.id, p.perm_code AS permCode, p.perm_name AS permName " +
-            "FROM sys_permission p " +
-            "INNER JOIN sys_role_permission rp ON p.id = rp.permission_id " +
-            "INNER JOIN sys_user_role ur ON rp.role_id = ur.role_id " +
+            "FROM permission p " +
+            "INNER JOIN role_permission rp ON p.id = rp.permission_id " +
+            "INNER JOIN user_role ur ON rp.role_id = ur.role_id " +
             "WHERE ur.user_id = #{userId}")
     List<Permission> findPermissionsByUserId(Integer userId);
 }
