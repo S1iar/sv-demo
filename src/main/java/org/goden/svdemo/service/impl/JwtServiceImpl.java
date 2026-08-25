@@ -36,11 +36,15 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Map<String, Object> parseToken(String token){
-        return JWT.require(Algorithm.HMAC256(secretKey))
+        Map<String, Object> user = JWT.require(Algorithm.HMAC256(secretKey))
                 .build()
                 .verify(token)
                 .getClaim("user")
                 .asMap();
+        if(user == null){
+            throw new JWTVerificationException("Token验证失败");
+        }
+        return user;
     }
 
     @Override

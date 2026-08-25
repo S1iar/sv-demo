@@ -6,7 +6,7 @@ import org.goden.svdemo.entity.User;
 import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.service.PasswordService;
 import org.goden.svdemo.service.UserService;
-import org.goden.svdemo.utils.ThreadLocalUtil;
+import org.goden.svdemo.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -57,8 +57,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(User user) {
-        Map<String, Object> token = ThreadLocalUtil.get();
-        Integer id = (Integer) token.get("id");
+        Long id = SecurityUtil.getCurrentUserId();
         if(id == null) throw new BusinessException("请重新登录!");
         user.setId(id);
         //仅更新nickname email userPic
@@ -72,8 +71,8 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("头像不能为空!");
         }
 
-        Map<String, Object> token = ThreadLocalUtil.get();
-        Integer id = (Integer) token.get("id");
+        Long id = SecurityUtil.getCurrentUserId();
+        if(id == null) throw new BusinessException("请重新登录!");
         User user = new User();
         user.setId(id);
         user.setUserPic(avatarUrl);
@@ -96,8 +95,8 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("二次验证密码不能为空!");
         }
 
-        Map<String, Object> token = ThreadLocalUtil.get();
-        Integer id = (Integer) token.get("id");
+        Long id = SecurityUtil.getCurrentUserId();
+        if(id == null) throw new BusinessException("请重新登录!");
 
         User user = userMapper.findUserById(id);
         String password = user.getPassword();

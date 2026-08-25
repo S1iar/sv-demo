@@ -3,19 +3,6 @@ server:
   servlet:
     context-path: /
 
-yml-test:
-  number: '123123'
-  name: 'momo'
-  hobbies:
-    - GG
-    - WOW
-    - LOL
-  peoples:
-    - name: '真一'
-      age: 32
-    - name: '行医'
-      age: 44
-
 jwt:
 #  secret: a-very-long-and-random-secret-key-that-should-be-at-least-256-bit
   secret: 'SvDemoTest'
@@ -24,7 +11,7 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
-      max-request-size: 10MB
+      max-request-size: 20MB
   devtools:
     restart:
       enabled: true
@@ -52,3 +39,35 @@ mybatis-plus:
       logic-delete-value: 1
       # 逻辑未删除值
       logic-not-delete-value: 0
+
+upload:
+  allowed-extensions:
+    - doc
+    - docx
+    - gif
+    - jpg
+    - jpeg
+    - png
+    - pdf
+    - xlsx
+    - xls
+    - txt
+  default-max-size: 10485760  # 10MB
+  extension-max-size:
+    xlsx: 52428800            # 50MB
+    pdf: 20971520             # 20MB
+    mp4: 1073741824           # 1GB
+  upload-dir: E:\Project\sv-demo\src\main\resources\uploadFile
+
+yml-test:
+  number: '123123'
+  name: 'momo'
+  hobbies:
+    - GG
+    - WOW
+    - LOL
+  peoples:
+    - name: '真一'
+      age: 32
+    - name: '行二'
+      age: 44

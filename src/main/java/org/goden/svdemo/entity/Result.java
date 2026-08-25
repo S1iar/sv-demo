@@ -22,7 +22,15 @@ public class Result<T> implements Serializable {
         return new Result<>(200, "操作成功", null);
     }
 
+    public static <E> Result<E> success(String message,E data){
+        return new Result<>(200, message, data);
+    }
+
     public static <T> Result<T> error(String message){
         return new Result<>(1, message, null);
+    }
+
+    public static <T> Result<T> error(Integer code,String message){
+        return new Result<>(code, message, null);
     }
 }

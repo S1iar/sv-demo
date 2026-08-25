@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 //@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class User {
 
-    private Integer id;
+    private Long id;
 
     @NotBlank(groups = {ValidationGroups.Create.class,ValidationGroups.Login.class},
             message = "用户名不能为空")
@@ -46,15 +46,6 @@ public class User {
     private String phone;
 
     private boolean enabled;
-
-    // 账号是否过期
-    private boolean accountNonExpired;
-
-    // 凭证(密码)是否过期
-    private boolean credentialsNonExpired;
-
-    // 账号是否禁用
-    private boolean accountNonLocked;
 
     private LocalDateTime createTime;
 

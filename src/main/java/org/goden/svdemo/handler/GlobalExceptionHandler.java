@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public Result handleValidationException(Exception ex) {
+    public Result<Void> handleValidationException(Exception ex) {
         return Result.error(StringUtils.hasLength(ex.getMessage())?ex.getMessage() : "操作失败");
     }
 
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public Result<Void> handleBusinessException(BusinessException e) {
-        // 这里使用错误码1，或从异常对象e中获取自定义的业务错误码
-        return Result.error(e.getMessage()); // 或 Result.error(e.getCode(), e.getMessage());
+        // 这里使用错误码1,或从异常对象e中获取自定义的业务错误码
+        return Result.error(e.getCode(), e.getMessage()); // 或 Result.error(e.getCode(), e.getMessage());
     }
 }

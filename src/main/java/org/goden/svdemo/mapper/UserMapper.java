@@ -18,7 +18,7 @@ public interface UserMapper {
     User findUserByUserNameAndPassword(String username, String password);
 
     @Select("SELECT * FROM user WHERE id =#{id}")
-    User findUserById(Integer id);
+    User findUserById(Long id);
 
     @Insert("INSERT INTO user(username,password,email,create_time,update_time)" +
             " VALUES(#{username},#{password},#{email},now(),now())")
@@ -37,7 +37,7 @@ public interface UserMapper {
     @Select("SELECT r.id, r.role_name AS roleName, r.role_desc AS roleDesc " +
             "FROM role r INNER JOIN user_role ur ON r.id = ur.role_id " +
             "WHERE ur.user_id = #{userId}")
-    List<Role> findRolesByUserId(Integer userId);
+    List<Role> findRolesByUserId(Long userId);
 
     // 查询用户拥有的所有权限（通过角色间接获得）
     @Select("SELECT DISTINCT p.id, p.perm_code AS permCode, p.perm_name AS permName " +
@@ -45,5 +45,5 @@ public interface UserMapper {
             "INNER JOIN role_permission rp ON p.id = rp.permission_id " +
             "INNER JOIN user_role ur ON rp.role_id = ur.role_id " +
             "WHERE ur.user_id = #{userId}")
-    List<Permission> findPermissionsByUserId(Integer userId);
+    List<Permission> findPermissionsByUserId(Long userId);
 }
