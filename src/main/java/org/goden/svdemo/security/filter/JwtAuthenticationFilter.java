@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.goden.svdemo.security.userdetails.CustomUserDetails;
 import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.security.service.UserDetailsService;
 import org.springframework.http.HttpStatus;
@@ -64,8 +65,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 String username = (String) user.get("username");
                 // JWT的claim反序列化后小整数是Integer，不能直接强转Long
-//                Long id = ((Number) user.get("id")).longValue();
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                Long id = ((Number) user.get("id")).longValue();
+                CustomUserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                userDetails.setId(id);
 
                 // 2. 创建Authentication对象并存入SecurityContextHolder (替代ThreadLocal)
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
