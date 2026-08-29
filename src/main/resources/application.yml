@@ -7,6 +7,7 @@ jwt:
 #  secret: a-very-long-and-random-secret-key-that-should-be-at-least-256-bit
   secret: 'SvDemoTest'
 
+
 spring:
   servlet:
     multipart:
@@ -22,6 +23,10 @@ spring:
     url: jdbc:mariadb://localhost:3306/sv_demo?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UT
     username: root
     password: 123
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 mybatis-plus:
   # 如果将来有XML文件，配置映射文件位置

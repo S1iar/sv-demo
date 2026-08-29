@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -88,10 +87,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (JWTVerificationException e) {
             // token验证失败
             returnUnauthorized(response, "Token验证失败!");
-        } finally {
-            // 请求结束后清理SecurityContext (替代Interceptor的afterCompletion逻辑)
-            // 通常由SecurityContextPersistenceFilter处理,但在此明确清理是良好实践
-            SecurityContextHolder.clearContext();
         }
     }
 
