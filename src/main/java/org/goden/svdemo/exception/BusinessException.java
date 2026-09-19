@@ -85,7 +85,7 @@ public class BusinessException extends RuntimeException {
     }
 
     public static BusinessException unauthorized() {
-        return new BusinessException(401, "未授权");
+        return new BusinessException(401, "未认证");
     }
 
     public static BusinessException forbidden() {

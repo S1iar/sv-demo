@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +27,6 @@ import java.util.Map;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-
     private final UserDetailsService userDetailsService;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -36,15 +36,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-    // 定义不需要JWT验证的路径
+    /** 不需要 JWT 验证的路径 */
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
             "/user/login",
-            "/user/register"
+            "/user/register",
+            "/user/refresh"
     );
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // 去掉contextPath后精确匹配，避免 /xxx/user/login 这类路径被误放行
         String path = request.getRequestURI().substring(request.getContextPath().length());
         return EXCLUDED_PATHS.contains(path);
     }
@@ -59,43 +59,43 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7).trim();
-                // 1. 解析Token
+                // 1. 解析并校验 token（验签 + 黑名单）
                 Map<String, Object> user = jwtService.parseToken(token);
 
                 String username = (String) user.get("username");
-                // JWT的claim反序列化后小整数是Integer，不能直接强转Long
+                // JWT claim 反序列化后小整数为 Integer，不可直接强转 Long
                 Long id = ((Number) user.get("id")).longValue();
                 CustomUserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 userDetails.setId(id);
 
-                // 2. 创建Authentication对象并存入SecurityContextHolder (替代ThreadLocal)
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // 2. 写入 SecurityContext
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            }else {
-                //未携带token
+            } else {
                 returnUnauthorized(response, "账号未登录!");
-                return;  // 终止过滤器链
+                return;
             }
-            // 继续执行过滤器链
             filterChain.doFilter(request, response);
         } catch (TokenExpiredException e) {
-            // token过期
-            returnUnauthorized(response, "登录已过期,请重新登录!");
+            // access token 过期，前端应拿 refresh token 去 /user/refresh 换新
+            returnJson(response, HttpStatus.UNAUTHORIZED.value(), "access_token_expired", "登录已过期,请重新登录!");
         } catch (UsernameNotFoundException e) {
-            // token有效但用户已不存在
             returnUnauthorized(response, "账号不存在或已被删除!");
         } catch (JWTVerificationException e) {
-            // token验证失败
-            returnUnauthorized(response, "Token验证失败!");
+            returnUnauthorized(response, e.getMessage());
         }
     }
 
-    // 返回401响应的方法
     private void returnUnauthorized(HttpServletResponse response, String message) throws IOException {
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        returnJson(response, HttpStatus.UNAUTHORIZED.value(), "401", message);
+    }
+
+    private void returnJson(HttpServletResponse response, int status, String code, String message) throws IOException {
+        response.setStatus(status);
         response.setContentType("application/json;charset=UTF-8");
         Map<String, Object> result = Map.of(
-                "code", 401,
+                "code", code,
                 "message", message,
                 "timestamp", System.currentTimeMillis()
         );

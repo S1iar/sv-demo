@@ -4,8 +4,11 @@ server:
     context-path: /
 
 jwt:
-#  secret: a-very-long-and-random-secret-key-that-should-be-at-least-256-bit
+  #  secret: a-very-long-and-random-secret-key-that-should-be-at-least-256-bit
   secret: 'SvDemoTest'
+  access-token-validity: 900000      # 15分钟
+  refresh-token-validity: 604800000  # 7天
+  refresh-grace-period: 900000       # 15分钟宽限
 
 
 spring:
