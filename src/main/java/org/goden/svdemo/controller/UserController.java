@@ -8,6 +8,7 @@ import org.goden.svdemo.service.UserService;
 import org.goden.svdemo.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
@@ -22,6 +23,10 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
+    // 管理员权限(角色权限)
+    // @PreAuthorize("hasRole('ADMIN')")
+
+    @PreAuthorize("hasAuthority('user:register')")
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> register(@Validated(ValidationGroups.Create.class) @RequestBody User user) {
         userService.register(user);
@@ -37,12 +42,14 @@ public class UserController {
     // 改密成功回调
     // localStorage.clear();
     // window.location.href = '/login';
+    @PreAuthorize("hasAuthority('user:login')")
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<Map<String, String>> login(@Validated(ValidationGroups.Login.class) @RequestBody User user) {
         Map<String, String> tokens = userService.login(user);
         return Result.success(tokens);
     }
 
+    @PreAuthorize("hasAuthority('user:refresh')")
     @PostMapping(value = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<Map<String, String>> refresh(@RequestBody Map<String, String> body) {
         String refreshToken = body.get("refreshToken");
@@ -63,6 +70,8 @@ public class UserController {
 //        localStorage.clear();
 //        window.location.href = '/login';
 //    });
+    // 用户功能权限(功能权限)
+    @PreAuthorize("hasAuthority('user:out')")
     @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> logout(@RequestHeader("Authorization") String accessToken,
                                  @RequestBody(required = false) Map<String, String> body) {
@@ -78,7 +87,7 @@ public class UserController {
     }
 
     // ==================== 用户资料相关（需要登录） ====================
-
+    @PreAuthorize("hasAuthority('user:info')")
     @GetMapping(value = "/getUserInfo", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<User> getUserInfo() {
         String userName = SecurityUtil.getCurrentUsername();
@@ -87,18 +96,21 @@ public class UserController {
         return Result.success(user);
     }
 
+    @PreAuthorize("hasAuthority('user:update')")
     @PatchMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> update(@Validated(ValidationGroups.Update.class) @RequestBody User user) {
         userService.update(user);
         return Result.success("更新成功!");
     }
 
+    @PreAuthorize("hasAuthority('user:update')")
     @PatchMapping(value = "/updateAvatar", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> updateAvatar(@RequestParam String avatarUrl) {
         userService.updateAvatar(avatarUrl);
         return Result.success("头像已更新!");
     }
 
+    @PreAuthorize("hasAuthority('user:update')")
     @PatchMapping(value = "/updatePassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> updatePassword(@RequestBody Map<String, String> params) {
         userService.updatePassword(params);

@@ -2,11 +2,15 @@ package org.goden.svdemo.handler;
 
 import org.goden.svdemo.exception.BusinessException;
 import org.goden.svdemo.entity.Result;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -47,5 +51,20 @@ public class GlobalExceptionHandler {
     public Result<Void> handleBusinessException(BusinessException e) {
         // 这里使用错误码1,或从异常对象e中获取自定义的业务错误码
         return Result.error(e.getCode(), e.getMessage()); // 或 Result.error(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * 处理权限异常
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Result<Void> handleAccessDenied(AccessDeniedException e) {
+        return Result.error(403, e.getMessage());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Result<Void> handleAuthentication(AuthenticationException e) {
+        return Result.error(401, e.getMessage());
     }
 }

@@ -3,6 +3,7 @@ package org.goden.svdemo.security.config;
 import org.goden.svdemo.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;  // 新增
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,6 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity   // 开启 @PreAuthorize 等注解支持
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -22,29 +24,34 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // 禁用CSRF（因为通常API项目使用无状态认证如JWT）
         http.csrf(AbstractHttpConfigurer::disable)
-                // 设置会话管理为无状态（STATELESS）
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        // 配置无需认证的端点 (对应原WebConfig中的excludePathPatterns)
-                        .requestMatchers(
-                                "/user/login",
-                                "/user/register").permitAll()
-                        // 1. 基于角色的访问控制 (使用 hasRole, 框架会自动匹配"ROLE_"前缀)
-//                        .requestMatchers("/admin/**").hasRole("ADMIN") // 等价于 hasAuthority("ROLE_ADMIN")
-//                        .requestMatchers("/user/profile").hasAnyRole("ADMIN", "USER")
+            // 设置会话管理为无状态（STATELESS）
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-//                        // 2. 基于权限（Authority）的访问控制 (更细粒度)
-//                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("product:create")
-//                        .requestMatchers(HttpMethod.DELETE, "/api/orders/*").hasAuthority("order:delete")
-//                        .requestMatchers(HttpMethod.GET, "/api/statistics").hasAuthority("stat:read")
+            // 配置异常处理委托：让 Spring Security 将权限异常直接抛出，由全局异常处理器捕获
+            .exceptionHandling(exception -> exception
+                    .accessDeniedHandler((request, response, accessDeniedException) -> {
+                        // 直接抛出，交给 @RestControllerAdvice
+                        throw accessDeniedException;
+                    })
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        // 认证异常也直接抛出
+                        throw authException;
+                    })
+            )
 
-                        // 其他所有请求都需要认证
-                        .anyRequest().authenticated()
-                )
-                // 在UsernamePasswordAuthenticationFilter之前添加我们的JWT过滤器
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .authorizeHttpRequests(auth -> auth
+                    // 配置无需认证的端点
+                    .requestMatchers(
+                            "/user/login",
+                            "/user/refresh",
+                            "/user/register")
+                    .permitAll()
+                    // 如果需要基于 URL 的权限控制，可以在这里配置（可选）
+                    // .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
