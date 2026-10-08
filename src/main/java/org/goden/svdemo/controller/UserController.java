@@ -26,7 +26,6 @@ public class UserController {
     // 管理员权限(角色权限)
     // @PreAuthorize("hasRole('ADMIN')")
 
-    @PreAuthorize("hasAuthority('user:register')")
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> register(@Validated(ValidationGroups.Create.class) @RequestBody User user) {
         userService.register(user);
@@ -42,14 +41,12 @@ public class UserController {
     // 改密成功回调
     // localStorage.clear();
     // window.location.href = '/login';
-    @PreAuthorize("hasAuthority('user:login')")
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<Map<String, String>> login(@Validated(ValidationGroups.Login.class) @RequestBody User user) {
         Map<String, String> tokens = userService.login(user);
         return Result.success(tokens);
     }
 
-    @PreAuthorize("hasAuthority('user:refresh')")
     @PostMapping(value = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<Map<String, String>> refresh(@RequestBody Map<String, String> body) {
         String refreshToken = body.get("refreshToken");

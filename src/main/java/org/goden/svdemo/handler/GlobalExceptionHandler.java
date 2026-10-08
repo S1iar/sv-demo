@@ -59,12 +59,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public Result<Void> handleAccessDenied(AccessDeniedException e) {
-        return Result.error(403, e.getMessage());
+        return Result.error(403, "权限不足!");
     }
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Result<Void> handleAuthentication(AuthenticationException e) {
-        return Result.error(401, e.getMessage());
+        return Result.error(401, "账号未登录,请先登录!");
     }
 }

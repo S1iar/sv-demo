@@ -17,10 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -36,17 +33,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-    /** 不需要 JWT 验证的路径 */
-    private static final List<String> EXCLUDED_PATHS = Arrays.asList(
-            "/user/login",
-            "/user/register",
-            "/user/refresh"
-    );
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI().substring(request.getContextPath().length());
-        return EXCLUDED_PATHS.contains(path);
+        //不需要 JWT 验证的路径
+        return path.endsWith("/user/login")
+                || path.endsWith("/user/register")
+                || path.endsWith("/user/refresh");
     }
 
     @Override
@@ -72,11 +66,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                returnUnauthorized(response, "账号未登录!");
-                return;
             }
             filterChain.doFilter(request, response);
+
         } catch (TokenExpiredException e) {
             // access token 过期，前端应拿 refresh token 去 /user/refresh 换新
             returnJson(response, HttpStatus.UNAUTHORIZED.value(), "access_token_expired", "登录已过期,请重新登录!");

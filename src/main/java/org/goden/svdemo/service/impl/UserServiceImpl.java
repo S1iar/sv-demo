@@ -1,6 +1,7 @@
 package org.goden.svdemo.service.impl;
 
 import org.goden.svdemo.exception.BusinessException;
+import org.goden.svdemo.mapper.RoleMapper;
 import org.goden.svdemo.mapper.UserMapper;
 import org.goden.svdemo.entity.User;
 import org.goden.svdemo.service.JwtService;
@@ -24,6 +25,10 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Autowired
+    private RoleMapper roleMapper;
+
+
+    @Autowired
     private JwtService jwtService;
 
     @Override
@@ -41,8 +46,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword("");
         return user;
     }
-
-    // ========== 登录：返回双 token，无互踢 ==========
 
     @Override
     public Map<String, String> login(User user) {
@@ -129,5 +132,6 @@ public class UserServiceImpl implements UserService {
         String s = passwordService.encodePassword(user.getPassword());
         user.setPassword(s);
         userMapper.add(user);
+        roleMapper.add(user);
     }
 }

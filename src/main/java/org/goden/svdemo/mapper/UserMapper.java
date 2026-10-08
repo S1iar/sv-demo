@@ -1,9 +1,6 @@
 package org.goden.svdemo.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.goden.svdemo.entity.Permission;
 import org.goden.svdemo.entity.Role;
 import org.goden.svdemo.entity.User;
@@ -20,6 +17,8 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE id =#{id}")
     User findUserById(Long id);
 
+    // @Options 注解，指定 useGeneratedKeys = true 和 keyProperty 为实体类中对应主键的属性名,之后用user.getId就可以直接获取insert在表数据自增时候赋予的id
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     @Insert("INSERT INTO user(username,password,email,create_time,update_time)" +
             " VALUES(#{username},#{password},#{email},now(),now())")
     void add(User user);
