@@ -34,12 +34,12 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.refresh-grace-period:900000}")
     private long refreshGracePeriod;
 
-    private final StringRedisTemplate redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
     private static final String BLACKLIST_PREFIX = "revoked:";
 
-    public JwtServiceImpl(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    public JwtServiceImpl(StringRedisTemplate stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     // ==================== Token 生成 ====================
@@ -162,8 +162,7 @@ public class JwtServiceImpl implements JwtService {
 
         } catch (TokenExpiredException e) {
             // 5. 已过期但在宽限期内：同样允许刷新
-            if (oldExpiresAt != null
-                    && System.currentTimeMillis() - oldExpiresAt.getTime() <= refreshGracePeriod) {
+            if (oldExpiresAt != null && System.currentTimeMillis() - oldExpiresAt.getTime() <= refreshGracePeriod) {
                 Map<String, Object> claims = decoded.getClaim("user").asMap();
                 Map<String, String> newTokens = generateTokenPair(claims);
                 blacklistToken(oldJti, oldExpiresAt);
@@ -187,7 +186,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public void revokeToken(String jti, long ttlSeconds) {
         if (jti != null && ttlSeconds > 0) {
-            redisTemplate.opsForValue().set(
+            stringRedisTemplate.opsForValue().set(
                     BLACKLIST_PREFIX + jti,
                     "1",
                     ttlSeconds,
@@ -237,7 +236,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public boolean isRevoked(String jti) {
         if (jti == null) return false;
-        return Boolean.TRUE.equals(redisTemplate.hasKey(BLACKLIST_PREFIX + jti));
+        return Boolean.TRUE.equals(stringRedisTemplate.hasKey(BLACKLIST_PREFIX + jti));
     }
 
     /** 将 token 加入黑名单，TTL = 剩余有效期 */

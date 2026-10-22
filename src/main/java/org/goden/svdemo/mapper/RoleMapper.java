@@ -6,6 +6,7 @@ import org.goden.svdemo.entity.User;
 
 @Mapper
 public interface RoleMapper {
+    // role_id:2,默认使用普通用户权限
     @Insert("INSERT INTO user_role(user_id, role_id) VALUES(#{id},2)")
     void add(User user);
 }
