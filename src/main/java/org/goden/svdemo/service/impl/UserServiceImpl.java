@@ -10,8 +10,8 @@ import org.goden.svdemo.service.UserService;
 import org.goden.svdemo.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void update(User user) {
         Long id = SecurityUtil.getCurrentUserId();
         if (id == null) throw new BusinessException("请重新登录!");
@@ -75,6 +76,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateAvatar(String avatarUrl) {
         if (avatarUrl == null || avatarUrl.isEmpty()) {
             throw new BusinessException("头像不能为空!");
@@ -90,6 +92,7 @@ public class UserServiceImpl implements UserService {
     // ========== 改密：不再服务端强踢 ==========
 
     @Override
+    @Transactional
     public void updatePassword(Map<String, String> params) {
         String oldPassword = params.get("oldPassword");
         String newPassword = params.get("newPassword");
@@ -125,6 +128,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void register(User user) {
         User u = userMapper.findUserByUserName(user.getUsername());
         if (u != null) throw new BusinessException("该用户名已存在!");
