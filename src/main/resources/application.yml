@@ -32,8 +32,9 @@ spring:
       port: 6379
 
 mybatis-plus:
-  # 如果将来有XML文件，配置映射文件位置
-  # mapper-locations: classpath*:/mapper/**/*.xml
+  # 配置XML映射文件位置
+#  mapper-locations: classpath*:/mapper/**/*.xml
+  mapper-locations: classpath*:org/goden/svdemo/mapper/xml/*.xml
   configuration:
     # 开启驼峰命名自动映射
     map-underscore-to-camel-case: true

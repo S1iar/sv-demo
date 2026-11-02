@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.goden.svdemo.mapper.UserMapper">
+
+    <!-- 1. 根据用户名查询用户 -->
+    <select id="findUserByUserName" resultType="org.goden.svdemo.entity.User">
+        SELECT * FROM user WHERE username = #{username}
+    </select>
+
+    <!-- 2. 根据用户名和密码查询用户 -->
+    <select id="findUserByUserNameAndPassword" resultType="org.goden.svdemo.entity.User">
+        SELECT * FROM user WHERE username = #{username} AND password = #{password}
+    </select>
+
+    <!-- 3. 根据ID查询用户 -->
+    <select id="findUserById" resultType="org.goden.svdemo.entity.User">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <!-- 4. 新增用户（返回自增主键） -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user(username, password, email, create_time, update_time)
+        VALUES (#{username}, #{password}, #{email}, now(), now())
+    </insert>
+
+    <!-- 5. 更新用户信息（昵称、邮箱、头像） -->
+    <update id="updateById">
+        UPDATE user
+        SET nickname = #{nickname},
+            email = #{email},
+            user_pic = #{userPic},
+            update_time = now()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 6. 更新用户头像 -->
+    <update id="updateAvatarById">
+        UPDATE user
+        SET user_pic = #{userPic},
+            update_time = now()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 7. 更新用户密码 -->
+    <update id="updatePassword">
+        UPDATE user
+        SET password = #{password},
+            update_time = now()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 8. 查询用户拥有的角色列表 -->
+    <select id="findRolesByUserId" resultType="org.goden.svdemo.entity.Role">
+        SELECT r.id, r.role_name AS roleName, r.role_desc AS roleDesc
+        FROM role r
+                 INNER JOIN user_role ur ON r.id = ur.role_id
+        WHERE ur.user_id = #{userId}
+    </select>
+
+    <!-- 9. 查询用户拥有的所有权限（通过角色间接获得） -->
+    <select id="findPermissionsByUserId" resultType="org.goden.svdemo.entity.Permission">
+        SELECT DISTINCT p.id, p.perm_code AS permCode, p.perm_name AS permName
+        FROM permission p
+                 INNER JOIN role_permission rp ON p.id = rp.permission_id
+                 INNER JOIN user_role ur ON rp.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+    </select>
+
+</mapper>
