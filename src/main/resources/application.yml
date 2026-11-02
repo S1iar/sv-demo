@@ -30,6 +30,12 @@ spring:
     redis:
       host: localhost
       port: 6379
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2               # 至少保持 2 个空闲连接
+          time-between-eviction-runs: 10s   # 每 10 秒检测一次空闲连接
 
 mybatis-plus:
   # 配置XML映射文件位置
