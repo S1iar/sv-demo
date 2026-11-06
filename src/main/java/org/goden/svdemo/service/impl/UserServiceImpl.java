@@ -54,12 +54,14 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", u.getId());
         claims.put("username", u.getUsername());
+        // 写入当前版本号；旋转时旧 token 的 tv 会原样继承
+        claims.put("tv", jwtService.currentTokenVersion(u.getId()));
 
         // 生成双 token
         String accessToken = jwtService.generateAccessToken(claims);
         String refreshToken = jwtService.generateRefreshToken(claims);
 
-        // 返回双 token（不登记,多端不互踢）
+        // 返回双 token（不登记；同一账号多端登录互不影响，仅改密时全端作废）
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
@@ -89,8 +91,39 @@ public class UserServiceImpl implements UserService {
         userMapper.updateAvatarById(user);
     }
 
-    // ========== 改密：不再服务端强踢 ==========
+    // ========== 改密：版本号 +1，全端强制下线 ==========
 
+    // 改密成功回调：立即清状态 + 跳登录页
+//    fetch('/user/updatePassword', {
+//        method: 'PATCH',
+//                headers: {
+//            'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+//                    'Content-Type': 'application/json'
+//        },
+//        body: JSON.stringify({ oldPassword, newPassword, rePassword })
+//    }).then(res => res.json()).then(data => {
+//        if (data.code === 200) {
+//            localStorage.removeItem('accessToken');   // rt 是 HttpOnly，服务端已使其失效
+//            window.location.href = '/login';
+//        }
+//    });
+
+    // 全局响应拦截：token_invalid / refresh 失败(401) → 回登录页
+    // axios 示例：
+//    axios.interceptors.response.use(r => r, err => {
+//            if (err.response && err.response.status === 401) {
+//            const code = err.response.data?.code;
+//                if (code === 'token_invalid' || code === 401) {
+//                    // access 被判定失效（含改密作废），且 /user/refresh 也会 401
+//                    localStorage.removeItem('accessToken');
+//                    window.location.href = '/login';
+//                } else if (code === 'access_token_expired') {
+//                    // 正常过期才走静默刷新
+//                    refreshToken();
+//                }
+//            }
+//            return Promise.reject(err);
+//        });
     @Override
     @Transactional
     public void updatePassword(Map<String, String> params) {
@@ -123,8 +156,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordService.encodePassword(newPassword));
         userMapper.updatePassword(user);
 
-        // 不再调用 clearRefreshToken
-        // 前端收到改密成功响应后，主动清除本地 token 并跳登录页即可
+        // 改密即全端失效：版本号 +1，该用户所有旧 access/refresh 立即作废
+        jwtService.invalidateUserTokens(id);
+
     }
 
     @Override

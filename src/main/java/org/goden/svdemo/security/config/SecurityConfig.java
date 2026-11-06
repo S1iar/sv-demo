@@ -35,8 +35,11 @@ public class SecurityConfig {
                         throw accessDeniedException;
                     })
                     .authenticationEntryPoint((request, response, authException) -> {
-                        // 认证异常也直接抛出
-                        throw authException;
+                        // Filter 层抛异常到不了 @RestControllerAdvice，直接写 401 JSON
+                        response.setStatus(401);
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.getWriter().write(
+                                "{\"code\":401,\"message\":\"账号未登录,请先登录!\"}");
                     })
             )
 
@@ -45,7 +48,8 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/user/login",
                             "/user/refresh",
-                            "/user/register")
+                            "/user/register",
+                            "/user/logout")
                     .permitAll()
                     // 如果需要基于 URL 的权限控制，可以在这里配置（可选）
                     // .requestMatchers("/admin/**").hasRole("ADMIN")

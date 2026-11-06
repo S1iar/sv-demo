@@ -4,8 +4,9 @@ server:
     context-path: /
 
 jwt:
-  #  secret: a-very-long-and-random-secret-key-that-should-be-at-least-256-bit
-  secret: 'SvDemoTest'
+  # 生产用环境变量 JWT_SECRET 注入；下面默认值仅供本地调试，长度需 >=32 字节以满足 HMAC256
+  secret: ${JWT_SECRET:sv-demo-dev-only-secret-key-please-override-in-production-0123456789}
+#  secret: 'SvDemoTest'
   access-token-validity: 900000      # 15分钟
   refresh-token-validity: 604800000  # 7天
   refresh-grace-period: 900000       # 15分钟宽限
@@ -73,6 +74,12 @@ upload:
     pdf: 20971520             # 20MB
     mp4: 1073741824           # 1GB
   upload-dir: E:\Project\sv-demo\src\main\resources\uploadFile
+
+auth:
+  cookie:
+    secure: false      # 本地 http 调试；上 HTTPS 后改 true
+    same-site: Lax     # 前后端不同域 → 改 None，且 secure 必须 true
+    path: /user        # 必须同时覆盖 /user/refresh 和 /user/logout
 
 yml-test:
   number: '123123'

@@ -1,5 +1,6 @@
 package org.goden.svdemo.handler;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.goden.svdemo.exception.BusinessException;
 import org.goden.svdemo.entity.Result;
 import org.springframework.security.core.AuthenticationException;
@@ -18,6 +19,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Result<Void> handleValidationException(Exception ex) {
         return Result.error(StringUtils.hasLength(ex.getMessage())?ex.getMessage() : "操作失败");
+    }
+
+    /**
+     * 处理 JWT 校验异常（refresh 旋转失败：过期/被拉黑/类型错误/缺失）
+     * 必须返回 401，前端据此判断 refresh 已失效并跳转登录
+     */
+    @ExceptionHandler(JWTVerificationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Result<Void> handleJwtVerification(JWTVerificationException e) {
+        return Result.error(401, e.getMessage());
     }
 
     /**
