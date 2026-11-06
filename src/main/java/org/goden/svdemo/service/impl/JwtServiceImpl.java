@@ -227,7 +227,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public boolean isRevoked(String jti) {
         if (jti == null) return false;
-        return stringRedisTemplate.hasKey(BLACKLIST_PREFIX + jti);
+        return Boolean.TRUE.equals(stringRedisTemplate.hasKey(BLACKLIST_PREFIX + jti));
     }
 
     @Override

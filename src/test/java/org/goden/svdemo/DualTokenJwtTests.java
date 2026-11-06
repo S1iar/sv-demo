@@ -36,8 +36,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *       黑名单 key TTL 已缩短为秒级，会自然过期，无需手动清理
  */
 @SpringBootTest(properties = {
-        "jwt.access-token-validity=2000",   // 缩短时效以便触发过期分支
-        "jwt.refresh-token-validity=2000",
+        "jwt.access-token-validity=3000",   // 缩短时效以便触发过期分支；3s 保证 revoke 用例截断后仍有约 2s 黑名单余量
+        "jwt.refresh-token-validity=3000",
         "jwt.refresh-grace-period=60000"    // 60s 宽限窗口，过期后仍可断言
 })
 class DualTokenJwtTests {
@@ -214,7 +214,7 @@ class DualTokenJwtTests {
     @DisplayName("8. access 过期：抛 TokenExpiredException（前端据此走静默刷新的信号）")
     void accessTokenExpired() throws InterruptedException {
         String at = newAccessToken();
-        Thread.sleep(2100);
+        Thread.sleep(3100);
         assertThatThrownBy(() -> jwtService.parseAccessToken(at))
                 .isInstanceOf(TokenExpiredException.class);
     }
@@ -223,7 +223,7 @@ class DualTokenJwtTests {
     @DisplayName("9. 宽限期：refresh 过期后仍可换一次，第二次重放被黑名单拦截")
     void gracePeriodSingleUse() throws InterruptedException {
         String rt = newRefreshToken();
-        Thread.sleep(2100);  // refresh（2s）已过期，仍在 60s 宽限期内
+        Thread.sleep(3100);  // refresh（3s）已过期，仍在 60s 宽限期内
 
         Map<String, String> pair = jwtService.rotateRefreshToken(rt);
         assertThat(pair.get("accessToken")).isNotBlank();
