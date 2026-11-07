@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.goden.svdemo.anno.ValidationGroups;
+import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Data
 public class User {
 
+    @Id
     private Long id;
 
     @NotBlank(groups = {ValidationGroups.Create.class,ValidationGroups.Login.class},
