@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 // @JsonAutoDetect注解会将影响所有  public 的 getter 方法导致反序列化和序列化都进行了JsonIgnore
 //@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
-@TableName("user")
+@TableName("sys_user")
 @Data
 public class User {
 
