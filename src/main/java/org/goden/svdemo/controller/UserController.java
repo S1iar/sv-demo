@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.goden.svdemo.anno.ValidationGroups;
+import org.goden.svdemo.dto.PasswordUpdateDTO;
 import org.goden.svdemo.dto.UserFormDTO;
 import org.goden.svdemo.entity.Result;
 import org.goden.svdemo.entity.User;
@@ -37,7 +38,6 @@ public class UserController {
     // 管理员权限(角色权限)
     // @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "用户注册")
-    @Parameters(value = {@Parameter(name = "userDTO", description = "用户注册信息")})
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> register(@Validated(ValidationGroups.Create.class) @RequestBody UserFormDTO userDTO) {
         //userDTO拷贝到user
@@ -171,11 +171,10 @@ public class UserController {
      * 下一次任何请求都会 401；Cookie 里的 refresh 也已不能旋转。
      */
     @Operation(summary = "更新用户密码")
-    @Parameters(value = {@Parameter(name = "params", description = "旧密码,新的密码,二次验证密码")})
     @PreAuthorize("hasAuthority('user:update')")
     @PatchMapping(value = "/updatePassword", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result<String> updatePassword(@RequestBody Map<String, String> params) {
-        userService.updatePassword(params);
+    public Result<String> updatePassword(@RequestBody PasswordUpdateDTO passwordUpdateDTO) {
+        userService.updatePassword(passwordUpdateDTO);
         return Result.success("密码更新成功!");
     }
 }

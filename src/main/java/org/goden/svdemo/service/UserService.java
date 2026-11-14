@@ -1,11 +1,14 @@
 package org.goden.svdemo.service;
 
+import org.goden.svdemo.dto.PasswordUpdateDTO;
 import org.goden.svdemo.entity.User;
 
 import java.util.Map;
 
 public interface UserService {
     User findUserByUserName(String username);
+
+    User findUserById(Long id);
 
     User findUserByUserNameAndPassword(String username, String password);
 
@@ -17,5 +20,5 @@ public interface UserService {
 
     void updateAvatar(String avatarUrl);
 
-    void updatePassword(Map<String,String> params);
+    void updatePassword(PasswordUpdateDTO passwordUpdateDTO);
 }

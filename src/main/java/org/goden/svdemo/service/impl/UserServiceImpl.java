@@ -1,5 +1,6 @@
 package org.goden.svdemo.service.impl;
 
+import org.goden.svdemo.dto.PasswordUpdateDTO;
 import org.goden.svdemo.exception.BusinessException;
 import org.goden.svdemo.mapper.RoleMapper;
 import org.goden.svdemo.mapper.UserMapper;
@@ -36,6 +37,11 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.findUserByUserName(username);
         if (user == null) throw new BusinessException("该用户不存在!");
         return user;
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        return userMapper.findUserById(id);
     }
 
     @Override
@@ -78,7 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void update(User user) {
         Long id = SecurityUtil.getCurrentUserId();
         if (id == null) throw new BusinessException("请重新登录!");
@@ -88,7 +94,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateAvatar(String avatarUrl) {
         if (avatarUrl == null || avatarUrl.isEmpty()) {
             throw new BusinessException("头像不能为空!");
@@ -144,7 +150,7 @@ public class UserServiceImpl implements UserService {
      * 改密：验证旧密码 → 更新密码 → <b>版本号 +1</b> 让该用户所有历史 token 立即失效。
      * <p>这是"改密即全端下线"的核心；不需要维护"用户→jti 集合"，因为版本号天然实现"一次作废"。
      *
-     * <p>事务边界说明：{@code invalidateUserTokens} 目前放在 @Transactional 内。
+     * <p>事务边界说明：{@code invalidateUserTokens} 目前放在 @Transactional(rollbackFor = Exception.class) 内。
      * <ul>
      *   <li>若 DB 事务回滚但 Redis 已 INCR：用户会被误踢一次（下一次任何请求 401）。
      *       这是<b>有意的 Fail-Safe 权衡</b>——"多踢一次"远好于"旧 token 继续有效"。</li>
@@ -152,11 +158,11 @@ public class UserServiceImpl implements UserService {
      * </ul>
      */
     @Override
-    @Transactional
-    public void updatePassword(Map<String, String> params) {
-        String oldPassword = params.get("oldPassword");
-        String newPassword = params.get("newPassword");
-        String rePassword = params.get("rePassword");
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePassword(PasswordUpdateDTO passwordUpdateDTO) {
+        String oldPassword = passwordUpdateDTO.getOldPassword();
+        String newPassword = passwordUpdateDTO.getNewPassword();
+        String rePassword = passwordUpdateDTO.getRePassword();
 
         if (!StringUtils.hasText(oldPassword)) throw new BusinessException("原密码不能为空!");
         if (!StringUtils.hasText(newPassword)) throw new BusinessException("新密码不能为空!");
@@ -191,7 +197,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void register(User user) {
         User u = userMapper.findUserByUserName(user.getUsername());
         if (u != null) throw new BusinessException("该用户名已存在!");
