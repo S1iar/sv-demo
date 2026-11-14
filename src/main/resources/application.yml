@@ -49,6 +49,12 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
+      # ID生成策略-雪花算法
+      # id-type: assign_id
+      # 全局更新策略:null 跳过,空串照常更新,如("")
+      update-strategy: not_null
+      # 插入策略:null 跳过,空串照常插入
+      insert-strategy: not_null
       # 全局逻辑删除字段名
       logic-delete-field: deleted
       # 逻辑已删除值

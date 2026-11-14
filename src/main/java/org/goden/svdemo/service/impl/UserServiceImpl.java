@@ -98,6 +98,12 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setId(id);
         user.setUserPic(avatarUrl);
+
+//        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<User>()
+//                .set(User::getUserPic, avatarUrl)
+//                .setSql("update_time = NOW()")
+//                .eq(User::getId, id);
+
         userMapper.updateAvatarById(user);
     }
 
