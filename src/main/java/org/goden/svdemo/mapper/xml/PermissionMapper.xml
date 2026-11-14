@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.goden.svdemo.mapper.PermissionMapper">
+
+    <!-- 9. 查询用户拥有的所有权限（通过角色间接获得） -->
+    <select id="findPermissionsByUserId" resultType="org.goden.svdemo.entity.Permission">
+        SELECT DISTINCT p.id, p.perm_code AS permCode, p.perm_name AS permName
+        FROM permission p
+                 INNER JOIN role_permission rp ON p.id = rp.permission_id
+                 INNER JOIN user_role ur ON rp.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+    </select>
+
+</mapper>

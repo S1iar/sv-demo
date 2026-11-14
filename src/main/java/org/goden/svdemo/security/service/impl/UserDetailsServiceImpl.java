@@ -3,6 +3,7 @@ package org.goden.svdemo.security.service.impl;
 import org.goden.svdemo.entity.User;
 import org.goden.svdemo.entity.Role;
 import org.goden.svdemo.entity.Permission;
+import org.goden.svdemo.mapper.PermissionMapper;
 import org.goden.svdemo.mapper.UserMapper;
 import org.goden.svdemo.security.service.UserDetailsService;
 import org.goden.svdemo.security.userdetails.CustomUserDetails;
@@ -21,6 +22,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private PermissionMapper permissionMapper;
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -66,7 +70,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         // 细粒度权限
-        List<Permission> permissions = userMapper.findPermissionsByUserId(userId);
+        List<Permission> permissions = permissionMapper.findPermissionsByUserId(userId);
         for (Permission perm : permissions) {
             authorities.add(new SimpleGrantedAuthority(perm.getPermCode()));
         }
