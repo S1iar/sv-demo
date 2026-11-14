@@ -47,6 +47,14 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    /**
+     * 登录：签发 access + refresh 一对。
+     * <p>关键点：把当前 Redis 版本号写入 claims 的 {@code tv} 字段。之后：
+     * <ul>
+     *   <li>该用户所有携带旧 tv 的 token（比如上次改密前签发的）会在 Filter 校验时立即失配。</li>
+     *   <li>旋转 refresh 时新 token 会继承旧 token 的 tv（因为整个 claims map 被复制），保持一致。</li>
+     * </ul>
+     */
     @Override
     public Map<String, String> login(User user) {
         User u = findUserByUserNameAndPassword(user.getUsername(), user.getPassword());
@@ -55,6 +63,7 @@ public class UserServiceImpl implements UserService {
         claims.put("id", u.getId());
         claims.put("username", u.getUsername());
         // 写入当前版本号；旋转时旧 token 的 tv 会原样继承
+        // 副作用：读 Redis 时会滑动续期 jwt:tv:{uid} 的 TTL（详见 currentTokenVersion 注释）
         claims.put("tv", jwtService.currentTokenVersion(u.getId()));
 
         // 生成双 token
@@ -124,6 +133,17 @@ public class UserServiceImpl implements UserService {
 //            }
 //            return Promise.reject(err);
 //        });
+    /**
+     * 改密：验证旧密码 → 更新密码 → <b>版本号 +1</b> 让该用户所有历史 token 立即失效。
+     * <p>这是"改密即全端下线"的核心；不需要维护"用户→jti 集合"，因为版本号天然实现"一次作废"。
+     *
+     * <p>事务边界说明：{@code invalidateUserTokens} 目前放在 @Transactional 内。
+     * <ul>
+     *   <li>若 DB 事务回滚但 Redis 已 INCR：用户会被误踢一次（下一次任何请求 401）。
+     *       这是<b>有意的 Fail-Safe 权衡</b>——"多踢一次"远好于"旧 token 继续有效"。</li>
+     *   <li>若未来想更严格，可用 {@code TransactionSynchronizationManager} 注册 afterCommit 回调。</li>
+     * </ul>
+     */
     @Override
     @Transactional
     public void updatePassword(Map<String, String> params) {
@@ -157,6 +177,8 @@ public class UserServiceImpl implements UserService {
         userMapper.updatePassword(user);
 
         // 改密即全端失效：版本号 +1，该用户所有旧 access/refresh 立即作废
+        //   ① 旧 access：Filter 走 parseAccessToken → 版本号失配 → 401
+        //   ② 旧 refresh：/user/rotate 里 currentTokenVersion 与 token.tv 不等 → 401
         jwtService.invalidateUserTokens(id);
 
     }
