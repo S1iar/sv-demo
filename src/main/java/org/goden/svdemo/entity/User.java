@@ -1,5 +1,8 @@
 package org.goden.svdemo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
@@ -8,8 +11,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.goden.svdemo.anno.ValidationGroups;
-import org.springframework.data.annotation.Id;
-
 import java.time.LocalDateTime;
 
 // @JsonAutoDetect注解会将影响所有  public 的 getter 方法导致反序列化和序列化都进行了JsonIgnore
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @Data
 public class User {
 
-    @Id
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     @NotBlank(groups = {ValidationGroups.Create.class,ValidationGroups.Login.class},
@@ -49,9 +50,13 @@ public class User {
 
     private String phone;
 
+    @TableField("enabled")
     private boolean enabled;
 
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    @TableField(exist = false)
+    private String address;
 }
