@@ -51,7 +51,17 @@ public class SecurityConfig {
                             "/user/register",
                             "/user/logout")
                     .permitAll()
-                    // 如果需要基于 URL 的权限控制，可以在这里配置（可选）
+                    // 放行 Knife4j / Swagger 文档资源
+                    .requestMatchers(
+                            "/doc.html",
+                            "/webjars/**",
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/swagger-resources/**",
+                            "/favicon.ico")
+                    .permitAll()
+                    // 如果需要基于 URL 的权限控制,可以在这里配置(可选)
                     // .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             )
