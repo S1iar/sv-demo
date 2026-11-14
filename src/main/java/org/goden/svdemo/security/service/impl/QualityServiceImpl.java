@@ -22,12 +22,22 @@ public class QualityServiceImpl extends ServiceImpl<QualityMapper, Quality> impl
     public void deductValue(Quality quality) {
         //1.查询quality
         Quality q = this.getById(quality.getId());
+        if(q == null){
+            throw new BusinessException("质量记录不存在!");
+        }
         //2.校验InspectorId状态
         User inspector = userService.findUserById(q.getInspectorId());
-        if (!inspector.isEnabled()) {
-            throw new BusinessException("检查员已弃用!");
+        if (inspector == null || !inspector.isEnabled()) {
+            throw new BusinessException("检查员状态异常!");
         }
-        //3.扣减value
-        this.updateById(quality);
+        //3.尝试扣减value
+        Integer value1 = q.getValue1();
+        Integer value2 = q.getValue2();
+        if(quality.getValue1() >= value1 && quality.getValue2() >= value2){
+            q.setValue1(value1 - quality.getValue1());
+            q.setValue2(value2 - quality.getValue2());
+            this.updateById(q);
+        }
+        baseMapper.deductValue(quality);
     }
 }

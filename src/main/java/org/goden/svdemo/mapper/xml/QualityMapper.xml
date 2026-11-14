@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.goden.svdemo.mapper.QualityMapper">
+
+    <update id="deductValue" >
+        UPDATE quality
+        SET value1 = #{value1},
+            value2 = #{value2}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

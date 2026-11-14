@@ -14,15 +14,15 @@ public class QualityController {
 
     private final QualityService qualityService;
 
-    @GetMapping("/getQuality")
+    @GetMapping("/getQuality/{id}")
     @Parameters(value = {@Parameter(name = "id", description = "质量id")})
-    public Quality getQualityById(@RequestParam Long id) {
+    public Quality getQualityById(@PathVariable Long id) {
         return qualityService.getById(id);
     }
 
     @PostMapping("/updateQuality")
     @Parameters(value = {@Parameter(name = "quality", description = "质量信息")})
-    public void updateQualityById(Quality quality) {
+    public void updateQualityById(@RequestBody Quality quality) {
         qualityService.updateById(quality);
     }
 

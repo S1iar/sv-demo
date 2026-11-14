@@ -120,8 +120,8 @@ public class UserController {
                         @Parameter(name = "rtCookie", description = "refreshToken")})
     @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Result<String>> logout(
-            @RequestHeader(value = "Authorization", required = false) String accessToken,
-            @CookieValue(name = AuthCookieHelper.RT_NAME, required = false) String rtCookie) {
+            @RequestHeader(value = "Authorization", required = true) String accessToken,
+            @CookieValue(name = AuthCookieHelper.RT_NAME, required = true) String rtCookie) {
 
         jwtService.revokeAccessToken(accessToken);
 

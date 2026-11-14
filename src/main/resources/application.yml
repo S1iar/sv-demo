@@ -73,7 +73,7 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: com.xiaominfo.knife4j.demo.web
+      packages-to-scan: org.goden.svdemo.controller
 
 # http://127.0.0.1:8080/doc.html
 # http://ip:port/doc.html

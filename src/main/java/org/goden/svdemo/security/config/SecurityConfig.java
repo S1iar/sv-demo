@@ -61,6 +61,9 @@ public class SecurityConfig {
                             "/swagger-resources/**",
                             "/favicon.ico")
                     .permitAll()
+                    .requestMatchers(
+                            "/quality/**")
+                    .permitAll()
                     // 如果需要基于 URL 的权限控制,可以在这里配置(可选)
                     // .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
