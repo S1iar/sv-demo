@@ -83,7 +83,8 @@ public class UserServiceImpl implements UserService {
         Long id = SecurityUtil.getCurrentUserId();
         if (id == null) throw new BusinessException("请重新登录!");
         user.setId(id);
-        userMapper.updateById(user);
+        int i = userMapper.updateById(user);
+        if (i != 1) throw new BusinessException("更新失败!");
     }
 
     @Override

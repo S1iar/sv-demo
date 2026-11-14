@@ -24,17 +24,7 @@
         VALUES (#{username}, #{password}, #{email}, now(), now())
     </insert>
 
-    <!-- 5. 更新用户信息（昵称、邮箱、头像） -->
-    <update id="updateById">
-        UPDATE user
-        SET nickname = #{nickname},
-            email = #{email},
-            user_pic = #{userPic},
-            update_time = now()
-        WHERE id = #{id}
-    </update>
-
-    <!-- 6. 更新用户头像 -->
+    <!-- 5. 更新用户头像 -->
     <update id="updateAvatarById">
         UPDATE user
         SET user_pic = #{userPic},
@@ -42,7 +32,7 @@
         WHERE id = #{id}
     </update>
 
-    <!-- 7. 更新用户密码 -->
+    <!-- 6. 更新用户密码 -->
     <update id="updatePassword">
         UPDATE user
         SET password = #{password},
@@ -50,7 +40,7 @@
         WHERE id = #{id}
     </update>
 
-    <!-- 8. 查询用户拥有的角色列表 -->
+    <!-- 7. 查询用户拥有的角色列表 -->
     <select id="findRolesByUserId" resultType="org.goden.svdemo.entity.Role">
         SELECT r.id, r.role_name AS roleName, r.role_desc AS roleDesc
         FROM role r
