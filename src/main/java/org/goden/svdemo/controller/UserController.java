@@ -1,6 +1,13 @@
 package org.goden.svdemo.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.goden.svdemo.anno.ValidationGroups;
+import org.goden.svdemo.dto.UserFormDTO;
 import org.goden.svdemo.entity.Result;
 import org.goden.svdemo.entity.User;
 import org.goden.svdemo.service.JwtService;
@@ -8,7 +15,6 @@ import org.goden.svdemo.service.UserService;
 import org.goden.svdemo.support.AuthCookieHelper;
 import org.goden.svdemo.utils.SecurityUtil;
 import org.goden.svdemo.vo.LoginVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
@@ -18,24 +24,25 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
+@Tag(name = "用户管理")
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private AuthCookieHelper authCookieHelper;
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final AuthCookieHelper authCookieHelper;
 
     // 管理员权限(角色权限)
     // @PreAuthorize("hasRole('ADMIN')")
-
+    @Operation(summary = "用户注册")
+    @Parameters(value = {@Parameter(name = "userDTO", description = "用户注册信息")})
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Result<String> register(@Validated(ValidationGroups.Create.class) @RequestBody User user) {
+    public Result<String> register(@Validated(ValidationGroups.Create.class) @RequestBody UserFormDTO userDTO) {
+        //userDTO拷贝到user
+        User user = BeanUtil.copyProperties(userDTO, User.class);
+        //注册
         userService.register(user);
         return Result.success("注册成功!");
     }
@@ -57,6 +64,8 @@ public class UserController {
     // 改密成功回调
     // localStorage.clear();
     // window.location.href = '/login';
+    @Operation(summary = "用户登录")
+    @Parameters(value = {@Parameter(name = "user", description = "用户登录信息")})
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Result<LoginVO>> login(@Validated(ValidationGroups.Login.class) @RequestBody User user) {
         Map<String, String> tokens = userService.login(user);
@@ -74,6 +83,8 @@ public class UserController {
      * <p>失败场景（都返回 401，由 {@code GlobalExceptionHandler} 统一处理）：
      * Cookie 缺失、签名不对、类型不是 refresh、旧 jti 已在黑名单、版本号已变更、过期且不在宽限期。
      */
+    @Operation(summary = "刷新Token")
+    @Parameters(value = {@Parameter(name = "rtCookie", description = "refreshToken")})
     @PostMapping(value = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Result<LoginVO>> refresh(
             @CookieValue(name = AuthCookieHelper.RT_NAME, required = false) String rtCookie) {
@@ -104,6 +115,9 @@ public class UserController {
      * <p>注意：清 Cookie 时 {@code AuthCookieHelper#clear} 的 name/path/secure/sameSite 必须与
      * build 完全一致，否则浏览器不认这个"清除指令"。
      */
+    @Operation(summary = "用户登出")
+    @Parameters(value = {@Parameter(name = "accessToken", description = "accessToken"),
+                        @Parameter(name = "rtCookie", description = "refreshToken")})
     @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Result<String>> logout(
             @RequestHeader(value = "Authorization", required = false) String accessToken,
@@ -122,6 +136,7 @@ public class UserController {
     }
 
     // ==================== 用户资料相关（需要登录） ====================
+    @Operation(summary = "获取用户信息")
     @PreAuthorize("hasAuthority('user:info')")
     @GetMapping(value = "/getUserInfo", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<User> getUserInfo() {
@@ -131,6 +146,8 @@ public class UserController {
         return Result.success(user);
     }
 
+    @Operation(summary = "更新用户信息")
+    @Parameters(value = {@Parameter(name = "user", description = "新的用户信息")})
     @PreAuthorize("hasAuthority('user:update')")
     @PatchMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> update(@Validated(ValidationGroups.Update.class) @RequestBody User user) {
@@ -138,6 +155,8 @@ public class UserController {
         return Result.success("更新成功!");
     }
 
+    @Operation(summary = "更新用户头像")
+    @Parameters(value = {@Parameter(name = "avatarUrl", description = "新的头像地址")})
     @PreAuthorize("hasAuthority('user:update')")
     @PatchMapping(value = "/updateAvatar", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> updateAvatar(@RequestParam String avatarUrl) {
@@ -151,6 +170,8 @@ public class UserController {
      * <p>前端约定：收到 200 响应后立即清 localStorage 并跳登录页，因为当前 access 已作废，
      * 下一次任何请求都会 401；Cookie 里的 refresh 也已不能旋转。
      */
+    @Operation(summary = "更新用户密码")
+    @Parameters(value = {@Parameter(name = "params", description = "旧密码,新的密码,二次验证密码")})
     @PreAuthorize("hasAuthority('user:update')")
     @PatchMapping(value = "/updatePassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result<String> updatePassword(@RequestBody Map<String, String> params) {
