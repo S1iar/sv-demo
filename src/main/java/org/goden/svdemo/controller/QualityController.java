@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
 import org.goden.svdemo.entity.Quality;
-import org.goden.svdemo.security.service.QualityService;
+import org.goden.svdemo.service.QualityService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

@@ -15,4 +15,6 @@ public class Quality {
     private Integer value1;
     private Integer value2;
     private Long InspectorId;
+    /** 检验图片的访问 URL（跨域绝对地址） */
+    private String urlPath;
 }

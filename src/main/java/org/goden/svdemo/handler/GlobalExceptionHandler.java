@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import java.util.Map;
+import java.util.concurrent.RejectedExecutionException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -78,4 +80,15 @@ public class GlobalExceptionHandler {
     public Result<Void> handleAuthentication(AuthenticationException e) {
         return Result.error(401, "账号未登录,请先登录!");
     }
+
+    @ExceptionHandler(RejectedExecutionException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public Map<String, Object> handleRejection(RejectedExecutionException e) {
+//        log.warn("线程池拒绝任务: {}", e.getMessage());
+        return Map.of(
+                "code", 503,
+                "message", "服务器繁忙，请稍后重试"
+        );
+    }
+
 }

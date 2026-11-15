@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.goden.svdemo.anno.ValidationGroups;
@@ -84,9 +85,9 @@ public class UserController {
      * Cookie 缺失、签名不对、类型不是 refresh、旧 jti 已在黑名单、版本号已变更、过期且不在宽限期。
      */
     @Operation(summary = "刷新Token")
-    @Parameters(value = {@Parameter(name = "rtCookie", description = "refreshToken")})
     @PostMapping(value = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Result<LoginVO>> refresh(
+            @Parameter(description = "Refresh Token Cookie (自动携带)", in = io.swagger.v3.oas.annotations.enums.ParameterIn.COOKIE)
             @CookieValue(name = AuthCookieHelper.RT_NAME, required = false) String rtCookie) {
 
         Map<String, String> tokens = jwtService.rotateRefreshToken(rtCookie);
@@ -116,11 +117,11 @@ public class UserController {
      * build 完全一致，否则浏览器不认这个"清除指令"。
      */
     @Operation(summary = "用户登出")
-    @Parameters(value = {@Parameter(name = "accessToken", description = "accessToken"),
-                        @Parameter(name = "rtCookie", description = "refreshToken")})
     @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Result<String>> logout(
+            @Parameter(description = "Access Token", in = io.swagger.v3.oas.annotations.enums.ParameterIn.HEADER)
             @RequestHeader(value = "Authorization", required = true) String accessToken,
+            @Parameter(description = "Refresh Token Cookie", in = io.swagger.v3.oas.annotations.enums.ParameterIn.COOKIE)
             @CookieValue(name = AuthCookieHelper.RT_NAME, required = true) String rtCookie) {
 
         jwtService.revokeAccessToken(accessToken);

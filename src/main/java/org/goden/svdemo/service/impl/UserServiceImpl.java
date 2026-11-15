@@ -1,5 +1,6 @@
 package org.goden.svdemo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.goden.svdemo.dto.PasswordUpdateDTO;
 import org.goden.svdemo.exception.BusinessException;
 import org.goden.svdemo.mapper.RoleMapper;
@@ -106,7 +107,7 @@ public class UserServiceImpl implements UserService {
         user.setUserPic(avatarUrl);
 
 //        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<User>()
-//                .set(User::getUserPic, avatarUrl)
+//                .set(avatarUrl!=null,User::getUserPic, avatarUrl)
 //                .setSql("update_time = NOW()")
 //                .eq(User::getId, id);
 

@@ -1,4 +1,4 @@
-package org.goden.svdemo.security.service.impl;
+package org.goden.svdemo.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,7 @@ import org.goden.svdemo.entity.Quality;
 import org.goden.svdemo.entity.User;
 import org.goden.svdemo.exception.BusinessException;
 import org.goden.svdemo.mapper.QualityMapper;
-import org.goden.svdemo.security.service.QualityService;
+import org.goden.svdemo.service.QualityService;
 import org.goden.svdemo.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +33,11 @@ public class QualityServiceImpl extends ServiceImpl<QualityMapper, Quality> impl
         //3.尝试扣减value
         Integer value1 = q.getValue1();
         Integer value2 = q.getValue2();
-        if(quality.getValue1() >= value1 && quality.getValue2() >= value2){
-            q.setValue1(value1 - quality.getValue1());
-            q.setValue2(value2 - quality.getValue2());
-            this.updateById(q);
-        }
+        lambdaUpdate()
+                .set(value1 - quality.getValue1() >= 0, Quality::getValue1, value1 - quality.getValue1())
+                .set(value2 - quality.getValue2() >= 0,Quality::getValue2, value2 - quality.getValue2())
+                .eq(Quality::getId, quality.getId())
+                .update();
         baseMapper.deductValue(quality);
     }
 }
