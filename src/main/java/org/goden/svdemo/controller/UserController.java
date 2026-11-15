@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.goden.svdemo.anno.ValidationGroups;
@@ -17,6 +16,7 @@ import org.goden.svdemo.service.UserService;
 import org.goden.svdemo.support.AuthCookieHelper;
 import org.goden.svdemo.utils.SecurityUtil;
 import org.goden.svdemo.vo.LoginVO;
+import org.goden.svdemo.vo.UserVO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
@@ -120,9 +120,9 @@ public class UserController {
     @PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Result<String>> logout(
             @Parameter(description = "Access Token", in = io.swagger.v3.oas.annotations.enums.ParameterIn.HEADER)
-            @RequestHeader(value = "Authorization", required = true) String accessToken,
+            @RequestHeader(value = "Authorization") String accessToken,
             @Parameter(description = "Refresh Token Cookie", in = io.swagger.v3.oas.annotations.enums.ParameterIn.COOKIE)
-            @CookieValue(name = AuthCookieHelper.RT_NAME, required = true) String rtCookie) {
+            @CookieValue(name = AuthCookieHelper.RT_NAME) String rtCookie) {
 
         jwtService.revokeAccessToken(accessToken);
 
@@ -145,6 +145,16 @@ public class UserController {
         if (userName == null) return Result.error(401, "请重新登录!");
         User user = userService.findUserByUserName(userName);
         return Result.success(user);
+    }
+
+    @Operation(summary = "获取用户信息及地址")
+    @PreAuthorize("hasAuthority('user:info')")
+    @GetMapping(value = "/getUserInfoByUserId", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result<UserVO> getUserInfoByUserId() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        if (userId == null) return Result.error(401, "请重新登录!");
+        UserVO uv = userService.findUserAndAddressByUserId(userId);
+        return Result.success(uv);
     }
 
     @Operation(summary = "更新用户信息")

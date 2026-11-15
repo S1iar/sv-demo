@@ -1,7 +1,10 @@
 package org.goden.svdemo.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import org.goden.svdemo.dto.PasswordUpdateDTO;
+import org.goden.svdemo.entity.Address;
 import org.goden.svdemo.exception.BusinessException;
 import org.goden.svdemo.mapper.RoleMapper;
 import org.goden.svdemo.mapper.UserMapper;
@@ -10,11 +13,14 @@ import org.goden.svdemo.service.JwtService;
 import org.goden.svdemo.service.PasswordService;
 import org.goden.svdemo.service.UserService;
 import org.goden.svdemo.utils.SecurityUtil;
+import org.goden.svdemo.vo.AddressVO;
+import org.goden.svdemo.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -195,6 +201,26 @@ public class UserServiceImpl implements UserService {
         //   ② 旧 refresh：/user/rotate 里 currentTokenVersion 与 token.tv 不等 → 401
         jwtService.invalidateUserTokens(id);
 
+    }
+
+    @Override
+    public UserVO findUserAndAddressByUserId(Long userId) {
+        // 1.查询用户
+        User user = userMapper.findUserById(userId);
+        if(user == null || !user.isEnabled()){
+            throw new BusinessException("该用户不存在!");
+        }
+        // 2.查询地址
+        List<Address> list = Db.lambdaQuery(Address.class)
+                .eq(Address::getUserId, userId)
+                .list();
+
+        UserVO uo = BeanUtil.copyProperties(user, UserVO.class);
+
+        if(!CollUtil.isEmpty(list)){
+            uo.setAddressList(BeanUtil.copyToList(list, AddressVO.class));
+        }
+        return uo;
     }
 
     @Override
