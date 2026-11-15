@@ -1,12 +1,13 @@
 package org.goden.svdemo.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.goden.svdemo.dto.PasswordUpdateDTO;
 import org.goden.svdemo.entity.User;
 import org.goden.svdemo.vo.UserVO;
-
+import java.util.List;
 import java.util.Map;
 
-public interface UserService {
+public interface UserService extends IService<User> {
     User findUserByUserName(String username);
 
     User findUserById(Long id);
@@ -24,4 +25,6 @@ public interface UserService {
     void updatePassword(PasswordUpdateDTO passwordUpdateDTO);
 
     UserVO findUserAndAddressByUserId(Long userId);
+
+    List<UserVO> findUserAndAddressByUserIds(List<Long> ids);
 }

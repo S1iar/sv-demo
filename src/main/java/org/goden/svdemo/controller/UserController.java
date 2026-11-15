@@ -24,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "用户管理")
@@ -155,6 +157,14 @@ public class UserController {
         if (userId == null) return Result.error(401, "请重新登录!");
         UserVO uv = userService.findUserAndAddressByUserId(userId);
         return Result.success(uv);
+    }
+
+    @Operation(summary = "批量获取用户信息及地址")
+    @PreAuthorize("hasAuthority('user:info')")
+    @GetMapping(value = "/getUserInfosByUserIds", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result<List<UserVO>> getUserInfosByUserIds(@RequestParam List<Long> userIds) {
+        List<UserVO> userAndAddressByUserIds = userService.findUserAndAddressByUserIds(userIds);
+        return Result.success(userAndAddressByUserIds);
     }
 
     @Operation(summary = "更新用户信息")

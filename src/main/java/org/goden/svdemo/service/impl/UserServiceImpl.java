@@ -2,6 +2,7 @@ package org.goden.svdemo.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import org.goden.svdemo.dto.PasswordUpdateDTO;
 import org.goden.svdemo.entity.Address;
@@ -19,12 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Autowired
     private PasswordService passwordService;
@@ -221,6 +221,35 @@ public class UserServiceImpl implements UserService {
             uo.setAddressList(BeanUtil.copyToList(list, AddressVO.class));
         }
         return uo;
+    }
+
+    @Override
+    public List<UserVO> findUserAndAddressByUserIds(List<Long> ids) {
+        List<User> users = listByIds(ids);
+        if(CollUtil.isEmpty(users)){
+            return Collections.emptyList();
+        }
+        List<Long> userIds = users.stream().map(User::getId).toList();
+        List<Address> addressList = Db.lambdaQuery(Address.class)
+                .in(Address::getUserId, userIds)
+                .list();
+
+        List<AddressVO> addressVOS = BeanUtil.copyToList(addressList, AddressVO.class);
+        // 拆出对应user的addressVO
+        Map<Long, List<AddressVO>> addressVOMap = new HashMap<>();
+        if(!addressVOS.isEmpty()){
+            addressVOMap = addressVOS.stream().collect(Collectors.groupingBy(AddressVO::getUserId));
+        }
+
+
+        List<UserVO> userVOS = new ArrayList<>(users.size());
+        for(User user : users){
+            UserVO userVO = BeanUtil.copyProperties(user, UserVO.class);
+            userVO.setAddressList(addressVOMap.getOrDefault(userVO.getId(), Collections.emptyList()));
+            userVOS.add(userVO);
+        }
+
+        return userVOS;
     }
 
     @Override
