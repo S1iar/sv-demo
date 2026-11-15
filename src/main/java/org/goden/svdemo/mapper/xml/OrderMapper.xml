@@ -3,4 +3,27 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.goden.svdemo.mapper.OrderMapper">
 
+
+<!--    <resultMap id="OrderDetailMap" type="com.xxx.OrderDetailVO">-->
+<!--        <id     property="orderId"   column="o_id"/>-->
+<!--        <result property="orderNo"   column="o_order_no"/>-->
+<!--        <result property="amount"    column="o_amount"/>-->
+<!--        <result property="userId"    column="u_id"/>-->
+<!--        <result property="userName"  column="u_name"/>-->
+<!--        <result property="phone"     column="u_phone"/>-->
+<!--    </resultMap>-->
+
+<!--    <select id="selectOrderDetail" resultMap="OrderDetailMap">-->
+<!--        SELECT-->
+<!--            o.id         AS o_id,-->
+<!--            o.order_no   AS o_order_no,-->
+<!--            o.amount     AS o_amount,-->
+<!--            u.id         AS u_id,-->
+<!--            u.name       AS u_name,-->
+<!--            u.phone      AS u_phone-->
+<!--        FROM `order` o-->
+<!--                 LEFT JOIN `user` u ON o.user_id = u.id-->
+<!--        WHERE o.order_no = #{orderNo}-->
+<!--    </select>-->
+
 </mapper>
