@@ -20,4 +20,10 @@ public class PageController {
         return Result.success(list);
     }
 
+    @GetMapping(value = "/pageList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result<List<String>> pageList(Integer pageNum, Integer pageSize){
+        List<String> pageList = pageService.pageList(pageNum, pageSize);
+        return Result.success(pageList);
+    }
+
 }
