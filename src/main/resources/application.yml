@@ -47,6 +47,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     # 在控制台打印SQL（开发环境开启）
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
   global-config:
     db-config:
       # ID生成策略-雪花算法
