@@ -198,4 +198,13 @@ public class UserController {
         userService.updatePassword(passwordUpdateDTO);
         return Result.success("密码更新成功!");
     }
+
+    // 管理员权限(角色权限)
+    // @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "分页获取所有用户信息")
+    @GetMapping(value = "/getAllUsersPage", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result<List<User>> getAllUsersPage(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        List<User> userList = userService.getAllUsersPage(pageNum, pageSize);
+        return Result.success(userList);
+    }
 }

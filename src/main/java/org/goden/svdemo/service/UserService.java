@@ -27,4 +27,6 @@ public interface UserService extends IService<User> {
     UserVO findUserAndAddressByUserId(Long userId);
 
     List<UserVO> findUserAndAddressByUserIds(List<Long> ids);
+
+    List<User> getAllUsersPage(Integer pageNum, Integer pageSize);
 }

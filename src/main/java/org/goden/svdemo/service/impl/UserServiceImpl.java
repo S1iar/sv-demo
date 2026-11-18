@@ -2,6 +2,9 @@ package org.goden.svdemo.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import org.goden.svdemo.dto.PasswordUpdateDTO;
@@ -250,6 +253,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         return userVOS;
+    }
+
+    @Override
+    public List<User> getAllUsersPage(Integer pageNum, Integer pageSize) {
+        Page<User> userPage = Page.of(pageNum, pageSize);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
+                .orderByAsc(User::getCreateTime)
+                .orderByAsc(User::getId);
+
+        // 使用userMapper.selectPage
+        Page<User> users = userMapper.selectPage(userPage, queryWrapper);
+//        List<User> records = users.getRecords();
+//        List<UserVO> userVOS = BeanUtil.copyToList(records, UserVO.class);
+        // 使用service的page方法
+//        Page<User> page = page(userPage, queryWrapper);
+
+        return users.getRecords();
     }
 
     @Override
